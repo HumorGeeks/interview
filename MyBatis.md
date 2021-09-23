@@ -1168,7 +1168,7 @@ ResultMapping 有多种表现形式如下：
 4. association：1对1关联字段
 5. Collection：1对多集合关联字段
 
-![image-20200624190002578](http://www.coderead.cn/p/mybatis/html/img/image-20200624190002578.png)
+![image-20200624190002578](![](https://gitee.com/HumorGeeks/img/raw/master//img/202109230955867.png;charset=UTF-8))
 
 ### 自动映射
 
@@ -1187,7 +1187,7 @@ ResultMapping 有多种表现形式如下：
 
 但很多时候对象结构， 是树级程现的。即对象中包含对象。可以通过子查询获取子对象属性。
 
-![image-20200624191331605](http://www.coderead.cn/p/mybatis/html/img/image-20200624191331605.png)
+![image-20200624191331605](![](https://gitee.com/HumorGeeks/img/raw/master//img/202109230955774.png;charset=UTF-8))
 
 当依次解析Blog中的属性时，会先解析填充普通属性，当解析到复合对象时，就会触发对子查询。
 
@@ -1238,11 +1238,7 @@ public static class ConfigurationFactory {
 
 通过对Bean的动态代理，重写所有属性的getXxx方法。在获取属性前先判断属性是否加载？然后加载之。
 
-![image-20200617173951308](http://www.coderead.cn/p/mybatis/html/img/image-20200617173951308.png)
-
-**内部结构**：
-
-![image-20200617174643229](http://www.coderead.cn/p/mybatis/html/img/image-20200617174643229.png)
+![](https://gitee.com/HumorGeeks/img/raw/master//img/202109230956181.png;charset=UTF-8)
 
 代理之后Bean会包含一个MethodHandler，内部在包含一个Map用于存放待执行懒加载，执行前懒加载前会移除。LoadPair用于针对反序列化的Bean准备执行环境。ResultLoader用于执行加载操作，执行前如果原执行器关闭会创建一个新的。
 
@@ -1252,7 +1248,7 @@ public static class ConfigurationFactory {
 
 代理过程发生在结果集解析 交创建对象之后(DefaultResultSetHandler.createResultObject)，如果对应的属性设置了懒加载，则会通过ProxyFactory 创建代理对象，该对象继承自原对象,然后将对象的值全部拷贝到代理对像。并设置相应MethodHandler（原对象直接抛弃）
 
-![image-20200617180130478](http://www.coderead.cn/p/mybatis/html/img/image-20200617180130478.png)
+![image-20200617180130478](https://gitee.com/HumorGeeks/img/raw/master//img/202109230959306.png;charset=UTF-8)
 
 ## 联合查询&嵌套映射
 
@@ -1262,15 +1258,15 @@ public static class ConfigurationFactory {
 
 **简单映射**：即返回的结果集列与对象属性是1对1的关系，这种情况下ResultHandler 会依次遍历结果集中的行，并给每一行创建一个对象，然后在遍历结果集列填充至对象的映射属性。
 
-![image-20200624152820045](http://www.coderead.cn/p/mybatis/html/img/image-20200624152820045.png)
+![image-20200624152820045](https://gitee.com/HumorGeeks/img/raw/master//img/202109230959351.png;charset=UTF-8)
 
 **嵌套映射**：但很多时候对象结构， 是树级程现的。即对象中包含对象。与之对应映射也是这种嵌套结构。
 
-![image-20200617182311560](http://www.coderead.cn/p/mybatis/html/img/image-20200617182311560.png)
+![image-20200617182311560](https://gitee.com/HumorGeeks/img/raw/master//img/202109230959926.png;charset=UTF-8)
 
 在配置方式上可以直接配置子映射，也以引入外部映射和自动映射。共有两类嵌套结构分别是一对多 与多对多 。
 
-![image-20200624155458786](http://www.coderead.cn/p/mybatis/html/img/image-20200624155458786.png)
+![image-20200624155458786](https://gitee.com/HumorGeeks/img/raw/master//img/202109230959094.png;charset=UTF-8)
 
 关于映射的使用方式，官网有非常详细的文档。这里就不在赘述。接下来分析一下，嵌套映射结果集填充过程。
 
@@ -1292,9 +1288,9 @@ where a.id = 1;
 
 通过上述语句联合查询语句，可以得出下表中结果。结果中前两字段对应Blog，后两个字段对应User。然后在将User作为author属性填充至Blog对象。
 
-![image-20200624160944086](http://www.coderead.cn/p/mybatis/html/img/image-20200624160944086.png)
+![image-20200624160944086](https://gitee.com/HumorGeeks/img/raw/master//img/202109230959144.png;charset=UTF-8)
 
-![image-20200624161317561](http://www.coderead.cn/p/mybatis/html/img/image-20200624161317561.png)
+![image-20200624161317561](https://gitee.com/HumorGeeks/img/raw/master//img/202109230959551.png;charset=UTF-8)
 
 上述两个例子中，每一行都会产生两个对象，一个Blog父对象，一个User子对象。
 
@@ -1315,7 +1311,7 @@ where a.id = 1;
 
 ![image-20200624162741455](http://www.coderead.cn/p/mybatis/html/img/image-20200624162741455.png)
 
-![image-20200624163754352](http://www.coderead.cn/p/mybatis/html/img/image-20200624163754352.png)
+![image-20200624163754352](https://gitee.com/HumorGeeks/img/raw/master//img/202109231000195.png;charset=UTF-8)
 
 上述结果中，相同的三行Blog将会创建一个Blog，同时分别创建三个不同的Comment组成一个集合，并填充至comments对象。
 
@@ -1323,7 +1319,7 @@ where a.id = 1;
 
 在1对多的查询过程中，是基于RowKey来断定两行数据是否相同的 。RowKey一般基于。但有时并不会指定 这时将会采用其它映射字段创建RowKey具体规则如下：
 
-![image-20200624164827237](http://www.coderead.cn/p/mybatis/html/img/image-20200624164827237.png)
+![image-20200624164827237](https://gitee.com/HumorGeeks/img/raw/master//img/202109231000809.png;charset=UTF-8)
 
 ### 结果集解析流程
 
@@ -1331,11 +1327,11 @@ where a.id = 1;
 
 这里直接采用1对多的情况进行解析，因为1对1就是1对多的简化版。查询的结果如下表：
 
-![image-20200624172114013](http://www.coderead.cn/p/mybatis/html/img/image-20200624172114013.png)
+![image-20200624172114013](https://gitee.com/HumorGeeks/img/raw/master//img/202109231000560.png;charset=UTF-8)
 
 其整个解析流程如下图：
 
-![image-20200624172205462](http://www.coderead.cn/p/mybatis/html/img/image-20200624172205462.png)
+![image-20200624172205462](https://gitee.com/HumorGeeks/img/raw/master//img/202109231000600.png;charset=UTF-8)
 
 ### 流程说明：
 
@@ -1363,19 +1359,19 @@ where a.id = 1;
 
 两个对象之间互相引用即循环引用，如下图就是一个例子：
 
-![image-20200624180749640](http://www.coderead.cn/p/mybatis/html/img/image-20200624180749640.png)
+![image-20200624180749640](https://gitee.com/HumorGeeks/img/raw/master//img/202109231000063.png;charset=UTF-8)
 
 对应ResultMap如下：
 
-![image-20200624180856644](http://www.coderead.cn/p/mybatis/html/img/image-20200624180856644.png)
+![image-20200624180856644](https://gitee.com/HumorGeeks/img/raw/master//img/202109231000955.png;charset=UTF-8)
 
 这种情况会导致解析死循环吗？答案是不会。DefaultResultSetHandler 在解析复合映射之前都会在上下文中填充当前解析对象（使用resultMapId做为Key）。如果子属性又映射引用了父映射ID，就可以直接获取不需要在去解析父对象。具体流程如下：
 
-![image-20200624181307366](http://www.coderead.cn/p/mybatis/html/img/image-20200624181307366.png)
+![image-20200624181307366](https://gitee.com/HumorGeeks/img/raw/master//img/202109231000364.png;charset=UTF-8)
 
 具体代码：
 
-![image-20200624181741738](http://www.coderead.cn/p/mybatis/html/img/image-20200624181741738.png)
+![image-20200624181741738](https://gitee.com/HumorGeeks/img/raw/master//img/202109231001899.png;charset=UTF-8)
 
 # 动态SQL全流程解析
 
@@ -1388,7 +1384,7 @@ where a.id = 1;
 - trim (where, set)
 - foreach
 
-![image-20200806120703019](http://www.coderead.cn/p/mybatis/html/img/image-20200806120703019.png)
+![image-20200806120703019](https://gitee.com/HumorGeeks/img/raw/master//img/202109231001973.png;charset=UTF-8)
 
 ### if
 
@@ -1479,7 +1475,7 @@ OGNL全称是对象导航图语言（Object Graph Navigation Language）是一�
 
 前面所说动态SQL xml元素最终都会被解成一个可执行的脚本。而MyBatis 正是通过为这个脚本传递参数，并执行脚本计算来生成动态SQL。脚本在MyBatis中体现即**SqlNode** 。
 
-![image-20200806120645381](http://www.coderead.cn/p/mybatis/html/img/image-20200806120645381.png)
+![image-20200806120645381](https://gitee.com/HumorGeeks/img/raw/master//img/202109231001631.png;charset=UTF-8)
 
 每个动态元素都会有一个与之对应的脚本类。如`if` 对应`ifSqlNode`、`forEarch`对应`ForEachSqlNode` 以此类推下去。这里要注意下面三个脚本
 
@@ -1487,13 +1483,13 @@ OGNL全称是对象导航图语言（Object Graph Navigation Language）是一�
 - `TextSqlNode` 表示一个通过参数拼装的文本如：`select * from ${user}`
 - `MixedSqlNode` 表示多个节点的集合
 
-![image-20200806120626470](http://www.coderead.cn/p/mybatis/html/img/image-20200806120626470.png)
+![image-20200806120626470](https://gitee.com/HumorGeeks/img/raw/master//img/202109231001939.png;charset=UTF-8)
 
 #### 动态脚本结构
 
 脚本之间是呈现嵌套关系的。比如`if`元素中会包含一个`MixedSqlNode` ，而`MixedSqlNode`下又会包含1至1至多个其它节点。最后组成一课脚本语法树。如下面左边的SQL元素组成右边的语法树。在节点最底层一定是一个`StaticTextNode`或 `TextNode`
 
-![image-20200806120550330](http://www.coderead.cn/p/mybatis/html/img/image-20200806120550330.png)
+![image-20200806120550330](https://gitee.com/HumorGeeks/img/raw/master//img/202109231001966.png;charset=UTF-8)
 
 #### 动态脚本执行
 
@@ -1523,11 +1519,11 @@ public boolean apply(DynamicContext context) {
 }
 ```
 
-![image-20200806165121810](http://www.coderead.cn/p/mybatis/html/img/image-20200806165121810.png)
+![image-20200806165121810](https://gitee.com/HumorGeeks/img/raw/master//img/202109231002397.png;charset=UTF-8)
 
 访问完所有节点之后，就会生成一个SQL字符串，但这个并不是可直接执行的SQL,因为里面的参数还是表达式的形式`#{name=name}` 就需要通过`SqlSourceBuilder` 来构建可执行的SQL和参数映射`ParameterMapping` 。然后才能生成BoundSql。下图表示了在上下文中执行所有节点之后，最生成BoundSql。
 
-![image-20200806170628013](http://www.coderead.cn/p/mybatis/html/img/image-20200806170628013.png)
+![image-20200806170628013](https://gitee.com/HumorGeeks/img/raw/master//img/202109231002599.png;charset=UTF-8)
 
 看源码从动态SQL到BoundSql 过程中，中间还经过了一次StaticSqlSource 生成？为什么要这么做呢，以及从XML中解析出的SqlNode集存储在哪？这里又要有一个新的概念`SqlSource` SQL源。
 
@@ -1535,7 +1531,7 @@ public boolean apply(DynamicContext context) {
 
 在上层定义上每个Sql映射（MappedStatement）中都会包含一个SqlSource 用来获取可执行Sql（`BoundSql`）。SqlSource又分为原生SQL源与动态SQL源，以及第三方源。其关系如下图：
 
-![image-20200806171940696](http://www.coderead.cn/p/mybatis/html/img/image-20200806171940696.png)
+![image-20200806171940696](https://gitee.com/HumorGeeks/img/raw/master//img/202109231002921.png;charset=UTF-8)
 
 - ProviderSqlSource ：第三方法SQL源，每次获取SQL都会基于参数动态创建静态数据源，然后在创建BoundSql
 - DynamicSqlSource：动态SQL源包含了SQL脚本，每次获取SQL都会基于参数又及脚本，动态创建创建BoundSql
@@ -1546,11 +1542,11 @@ public boolean apply(DynamicContext context) {
 
 SqlSource 是基于XML解析而来，解析的底层是使用Dom4j 把XML解析成一个个子节点，在通过 **XMLScriptBuilder** 遍历这些子节点最后生成对应的Sql源。其解析流程如下图：
 
-![image-20200806173121708](http://www.coderead.cn/p/mybatis/html/img/image-20200806173121708.png)
+![image-20200806173121708](https://gitee.com/HumorGeeks/img/raw/master//img/202109231002093.png;charset=UTF-8)
 
 从图中可以看出这是一种递归式的访问 所有节点，如果是文本节点就会直接创建TextNode 或StaticSqlNode。否则就会创建动态脚本节点如IfSqlNode等。这里每种动态节点都会对应的处理器(`NodeHandler`)来创建。创建好之后又会继续访问子节点，让递归继续下去。当然子节点所创建的SqNode 也会作为当前所创建的元素的子节点而存在。
 
-![image-20200806173540731](http://www.coderead.cn/p/mybatis/html/img/image-20200806173540731.png)
+![image-20200806173540731](https://gitee.com/HumorGeeks/img/raw/master//img/202109231002865.png;charset=UTF-8)
 
 # Configuration配置体系
 
@@ -1584,13 +1580,13 @@ Configuration 配置来源有三项：
 2. Mapper.xml SQL映射(MappedStatement) \结果集映射(ResultMapper)都来源于此。
 3. @Annotation SQL映射与结果集映射的另一种表达形式。
 
-![image-20200807101250310](http://www.coderead.cn/p/mybatis/html/img/image-20200807101250310.png)
+![image-20200807101250310](https://gitee.com/HumorGeeks/img/raw/master//img/202109231002567.png;charset=UTF-8)
 
 ## 配置元素
 
 Configuration 配置信息来源于xml和注解，每个文件和注解都是由若干个配置元素组成，并呈现嵌套关系，总体关系如下图所示：
 
-![image-20200807105008724](http://www.coderead.cn/p/mybatis/html/img/image-20200807105008724.png)
+![image-20200807105008724](https://gitee.com/HumorGeeks/img/raw/master//img/202109231002079.png;charset=UTF-8)
 
 关于各配置的使用请参见官网给出文档：https://mybatis.org/mybatis-3/zh/configuration.html#properties
 
@@ -1603,7 +1599,7 @@ Configuration 配置信息来源于xml和注解，每个文件和注解都是由
 3. 缓存<cache..> 或@CacheNamespace 由Cache对象承载
 4. 结果集映射 由ResultMap 对象承载
 
-![image-20200807105958166](http://www.coderead.cn/p/mybatis/html/img/image-20200807105958166.png)
+![image-20200807105958166](https://gitee.com/HumorGeeks/img/raw/master//img/202109231002107.png;charset=UTF-8)
 
 ## 配置文件解析
 
@@ -1618,13 +1614,13 @@ Configuration 配置信息来源于xml和注解，每个文件和注解都是由
 - SqlSourceBuilder：Sql数据源解析,将声明的SQL解析可执行的SQL。
 - XMLScriptBuilder：解析动态SQL数据源当中所设置 SqlNode脚本集。
 
-![image-20200807110849598](http://www.coderead.cn/p/mybatis/html/img/image-20200807110849598.png)
+![image-20200807110849598](https://gitee.com/HumorGeeks/img/raw/master//img/202109231003804.png;charset=UTF-8)
 
 ### XML文件解析流程
 
 整体解析流程是从XmlConfigBuilder 开始，然后逐步向内解析，直到解析完所有节点。我们通过一个MappedStatement 解析过程即可了解到期整体解析流程。
 
-![image-20200807114833966](http://www.coderead.cn/p/mybatis/html/img/image-20200807114833966.png)
+![image-20200807114833966](https://gitee.com/HumorGeeks/img/raw/master//img/202109231003756.png;charset=UTF-8)
 
 **流程说明：**
 
@@ -1641,7 +1637,7 @@ Configuration 配置信息来源于xml和注解，每个文件和注解都是由
 
 注解解析底层实现是通过反射获取Mapper接口当中注解元素实现。有两种方式一种是直接指定接口名，一种是指定包名然后自动扫描包下所有的接口类。这些逻辑均由Mapper注册器(MapperRegistry)实现。其接收一个接口类参数，并基于该参数创建针对该接口的动态代理工厂，然后解析内部方法注解生成每个MapperStatement 最后添加至Configuration 完成解析。
 
-![image-20200807121254428](http://www.coderead.cn/p/mybatis/html/img/image-20200807121254428.png)
+![image-20200807121254428](https://gitee.com/HumorGeeks/img/raw/master//img/202109231003788.png;charset=UTF-8)
 
 # 插件体系
 
@@ -1656,7 +1652,7 @@ Configuration 配置信息来源于xml和注解，每个文件和注解都是由
 
 这四个接口已经涵盖从发起接口调用到SQl声明、参数处理、结果集处理的全部流程。接口中任何一个方法都可以进行拦截改变方法原有属性和行为。不过这是一个非常危险的行为，稍不注意就会破坏MyBatis核心逻辑还不自知。所以在在使用插件之前一定要非常清晰MyBatis内部机制。
 
-![image-20200807153044715](http://www.coderead.cn/p/mybatis/html/img/image-20200807153044715.png)
+![image-20200807153044715](https://gitee.com/HumorGeeks/img/raw/master//img/202109231003424.png;charset=UTF-8)
 
 ## 插件的使用
 
@@ -1696,13 +1692,13 @@ public class ExamplePlugin implements Interceptor {
 
  注：只有从外部类调用拦截目标时 拦截才会生效，如果在内部调用代理逻辑会生效。如在Executor中有两个Query 方法，第一个会调用第二个query。如果你拦截的是第二个Query 则不会成功。
 
-![image-20200807155939042](http://www.coderead.cn/p/mybatis/html/img/image-20200807155939042.png)
+![image-20200807155939042](https://gitee.com/HumorGeeks/img/raw/master//img/202109231003960.png;charset=UTF-8)
 
 ## 插件代理机制
 
 Configuration 中有一个InterceptorChain(拦截链)保存了所有拦截器，当创建四大对象之后就会调用拦截链，对目标对象进行拦截代理。
 
-![image-20200807161313224](http://www.coderead.cn/p/mybatis/html/img/image-20200807161313224.png)
+![image-20200807161313224](https://gitee.com/HumorGeeks/img/raw/master//img/202109231003925.png;charset=UTF-8)
 
 对于这个插件拦截实现类似Spring AOP 但其实现要简单很多。代理很轻量清晰，连注释都显得多余。
 
@@ -1720,7 +1716,7 @@ Configuration 中有一个InterceptorChain(拦截链)保存了所有拦截器，
 
 接下来要解决的问题，是插件的入口写在哪里？去拦截的目标有哪些？
 
-![image-20200807162811935](http://www.coderead.cn/p/mybatis/html/img/image-20200807162811935.png)
+![image-20200807162811935](https://gitee.com/HumorGeeks/img/raw/master//img/202109231004884.png;charset=UTF-8)
 
 参数处理器 和结果集处理器显然不合适，而Executor.query() 又需要额外考虑 一、二级缓存逻辑。最后还是选定StatementHandler. 并拦截其prepare 方法。
 
