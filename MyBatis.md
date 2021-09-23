@@ -8,7 +8,7 @@
 
 MyBatis是一个基于JDBC的数据库访问组件。首先回顾一下JDBC执行流程：
 
-![image-20200514105048581](https://gitee.com/HumorGeeks/img/raw/master//img/202109222259329.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222259329.png;charset=UTF-8" alt="image-20200514105048581" style="zoom: 33%;" />
 
 **代码示例：**
 
@@ -35,11 +35,11 @@ readResultSet(resultSet);
 
 SqlSession 是myBatis的门面(采用门面模式设计)，核心作用是为用户提供API。API包括增、删、改、查以及提交、关闭等。其自身是没有能力处理这些请求的，所以内部会包含一个唯一的执行器 Executor，所有请求都会交给执行器来处理。如下图中SqlSession接收用户“修改”请求，然后转交给Executor。
 
-![image-20200514135118126](https://gitee.com/HumorGeeks/img/raw/master//img/202109222300237.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222300237.png;charset=UTF-8" alt="image-20200514135118126" style="zoom:33%;" />
 
 ## 执行器(Executor)
 
-Executor是一个大管家，核心功能包括：缓存维护、获取动态SQL、获取连接、以及最终的JDBC调用等。在图中所有蓝色节点全部都是在Executor中完成。![image-20200514141519499](https://gitee.com/HumorGeeks/img/raw/master//img/202109222301955.png;charset=UTF-8)
+Executor是一个大管家，核心功能包括：缓存维护、获取动态SQL、获取连接、以及最终的JDBC调用等。在图中所有蓝色节点全部都是在Executor中完成。<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222301955.png;charset=UTF-8" alt="image-20200514141519499" style="zoom:33%;" />
 
 这么多事情无法全部亲力亲为，就需要把任务分派下去。所以Executor内部还会包含若干个组件：
 
@@ -134,7 +134,7 @@ MyBatis是干什么的？抛开什么半ORM框架、DAO组件、跟Hibernate类�
 
 在平时开发的时候经常会有这样的需求，插入数据返回主键，或者插入数据之前需要获取主键，这样的需求在 mybatis 中也是支持的，其中主要的逻辑部分就在 KeyGenerator 中，下面是他的类图：
 
-![img](https://gitee.com/HumorGeeks/img/raw/master//img/202109222303046.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222303046.png;charset=UTF-8" alt="img" style="zoom: 67%;" />
 
 其中：
 
@@ -393,7 +393,7 @@ private void processGeneratedKeys(Executor executor, MappedStatement ms, Object 
 
 执行器用于连接 SqlSession与JDBC，所有与JDBC相关的操作都要通过它。图中展示了Executor在核心对象中所处位置。
 
-![image-20200226173524028](https://gitee.com/HumorGeeks/img/raw/master//img/202109222303983.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222303983.png;charset=UTF-8" alt="image-20200226173524028" style="zoom:33%;" />
 
 即然它是和JDBC打交道，那看一下它的几个核心方法。
 
@@ -411,7 +411,7 @@ public interface Executor {
 
 相信即使没有注释大家明白核心方法的意思。接下来看看其实现类如下图：
 
-![image-20200226180107395](https://gitee.com/HumorGeeks/img/raw/master//img/202109222304839.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222304839.png;charset=UTF-8" alt="image-20200226180107395" style="zoom: 33%;" />
 
 1. BaseExecutor：执行器基类，基础方法都放置在此。
 2. SimpleExecutor：默认执行器
@@ -431,7 +431,7 @@ Executor执行的时候并不一直接拿着JDBC的API一顿操作，而是由�
 - CallableStatementHandler：存储过程执行器
 - SimpleStatementHandler：基于Sql执行器
 
-![image-20200226184221499](https://gitee.com/HumorGeeks/img/raw/master//img/202109222304506.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222304506.png;charset=UTF-8" alt="image-20200226184221499" style="zoom: 33%;" />
 
 ### ResultSetHandler
 
@@ -441,7 +441,7 @@ Executor执行的时候并不一直接拿着JDBC的API一顿操作，而是由�
 
 Executor、StatementHandler、ResultSetHandler他们是如何交互的呢？通过以下时序图便可以看出。
 
-![image-20200226183953010](https://gitee.com/HumorGeeks/img/raw/master//img/202109222305497.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222305497.png;charset=UTF-8" alt="image-20200226183953010" style="zoom: 33%;" />
 
 说明：
 
@@ -687,7 +687,7 @@ MyBatis是一个Dao层映射框架，底层还是用的JDBC来访问数据库，
 
 这里重点说一下预编译器 Statement，通过该组件来发送对应的SQL与参数。它有三种类型：分别是简单Statement，预处理Statement和存储过程Statement。后者继承自前者，也就是说简单执行器的所有功能，预处理执行器和存储过程执行器都有。
 
-![image-20200603104356417](https://gitee.com/HumorGeeks/img/raw/master//img/202109222306184.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222306184.png;charset=UTF-8" alt="image-20200603104356417" style="zoom:33%;" />
 
 > 这里把Statement叫做执行器，只是一种说法，有些文章里也会叫做SQL处理器，但实质是一个东西
 
@@ -696,7 +696,7 @@ MyBatis是一个Dao层映射框架，底层还是用的JDBC来访问数据库，
 1. addBatch: 批处理操作，将多个SQL合并在一起，最后调用executeBatch 一起发送至数据库执行
 2. setFetchSize:设置从数据库每次读取的数量单位。该举措是为了防止一次性从数据库加载数据过多，导致内存溢出。
 
-![image-20200603110649252](https://gitee.com/HumorGeeks/img/raw/master//img/202109222306476.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222306476.png;charset=UTF-8" alt="image-20200603110649252" style="zoom:33%;" />
 
 ## MyBatis执行过程
 
@@ -731,7 +731,7 @@ Executor是MyBatis执行者接口，我们在次确认一下，执行器的功�
 
 对于这个接口MyBatis是有三个实现子类。分别是：SimpleExecutor(简单执行器)、ReuseExecutor(重用执行器)、BatchExecutor(批处理执行器)。
 
-![image-20200603142543333](https://gitee.com/HumorGeeks/img/raw/master//img/202109222307563.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222307563.png;charset=UTF-8" alt="image-20200603142543333" style="zoom:33%;" />
 
 ### 简单执行器
 
@@ -749,7 +749,7 @@ ReuseExecutor 区别在于他会将在会话期间内的Statement进行缓存，
 
 这里它是利用了Statement中的addBath 机制吗？不一定，因为只有连续相同的SQL语句并且相同的SQL映射声明，才会重用Statement，并利用其批处理功能。否则会构建一个新的Satement然后在flushStatements() 时一次执行。这么做的原因是它要保证执行顺序。跟调用顺序一至。
 
-![image-20200603150400952](https://gitee.com/HumorGeeks/img/raw/master//img/202109222307812.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222307812.png;charset=UTF-8" alt="image-20200603150400952" style="zoom:33%;" />
 
 假设上图中相同的线条颜色，就是相同的SQL语句。为了保证执行顺序只有绿色线条合并成一个Statement而两条黄线不能，否则就会导致，后面的黄线先于中间的绿线执行，有违调用顺序。
 
@@ -759,7 +759,7 @@ ReuseExecutor 区别在于他会将在会话期间内的Statement进行缓存，
 
 BaseExecutor 基础执行器主要是用于维护缓存和事物。事物是通过会话中调用commit、rollback进行管理。重点在于缓存这块它是如何处理的? (这里的缓存是指一级缓存）,它实现了Executor中的Query与update方法。会话中SQL请求，正是调用的这两个方法。Query方法中处理一级缓存逻辑，即根据SQL及参数判断缓存中是否存在数据，有就走缓存。否则就会调用子类的doQuery() 方法去查询数据库,然后在设置缓存。在doUpdate() 中主要是用于清空缓存。
 
-![image-20200603160545257](https://gitee.com/HumorGeeks/img/raw/master//img/202109222307900.png;charset=UTF-8)、
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222307900.png;charset=UTF-8" alt="image-20200603160545257" style="zoom: 33%;" />、
 
 当添加BaseExecutor 结构如上图。
 
@@ -775,7 +775,7 @@ BaseExecutor 基础执行器主要是用于维护缓存和事物。事物是通�
 
 执行器的种类有：基础执行器、简单执行器、重用执行器和批处理执行器，此外通过装饰器形式添加了一个缓存执行器。对应功能包括缓存处理、事物处理、重用处理以及批处理，这些是多个SQL执行中有**共性**地方。执行器存在的意义就是去处理这些共性。 如果说每个SQL调用是独立的，不需要缓存，不需要事物也不需集中在一起进行批处理的话，Executor也就没有存在的必要。但事实上这些都是MyBatis中不可或缺的特性。所以才设计出Executor这个组件。
 
-![image-20200603170208367](https://gitee.com/HumorGeeks/img/raw/master//img/202109222308664.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222308664.png;charset=UTF-8" alt="image-20200603170208367" style="zoom: 67%;" />
 
 # MyBatis一级缓存源码解析
 
@@ -822,7 +822,7 @@ myBatis中存在两个缓存，一级缓存和二级缓存。
 
 本文所要论述的一级缓存逻辑就存在于 BaseExecutor (基础执行器)里面。当会话接收到查询请求之后，会交给执行器的Query方法，在这里会通过 Sql、参数、分页条件等参数创建一个缓存key，在基于这个key去 PerpetualCache中查找对应的缓存值，如果有主直接返回。没有就会查询数据库，然后在填充缓存。
 
-![image-20200603175917082](https://gitee.com/HumorGeeks/img/raw/master//img/202109222308203.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222308203.png;charset=UTF-8" alt="image-20200603175917082" style="zoom: 33%;" />
 
 另外通过上图你也看了，最终缓存的实现非常简单，就是一个HashMap。
 
@@ -853,7 +853,7 @@ myBatis中存在两个缓存，一级缓存和二级缓存。
 
 二级缓存也称作是应用级缓存，与一级缓存不同的，是它的作用范围是整个应用，而且可以跨线程使用。所以二级缓存有更高的命中率，适合缓存一些修改较少的数据。在流程上是先访问二级缓存，在访问一级缓存。
 
-![image-20200609104535077](https://gitee.com/HumorGeeks/img/raw/master//img/202109222308886.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222308886.png;charset=UTF-8" alt="image-20200609104535077" style="zoom: 50%;" />
 
 ## 二缓存需求
 
@@ -950,17 +950,17 @@ myBatis中存在两个缓存，一级缓存和二级缓存。
 
 为了实现会话提交之后才变更二级缓存，MyBatis为每个会话设立了若干个暂存区，当前会话对指定缓存空间的变更，都存放在对应的暂存区，当会话提交之后才会提交到每个暂存区对应的缓存空间。为了统一管理这些暂存区，每个会话都一个唯一的事物缓存管理 器。所以这里暂存区也可叫做事物缓存。
 
-![image-20200609145840368](https://gitee.com/HumorGeeks/img/raw/master//img/202109222309360.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222309360.png;charset=UTF-8" alt="image-20200609145840368" style="zoom:33%;" />
 
 最后我们通过下图来了解会话、暂存区、二级缓存空间的关系：
 
-![image-20200609150130674](https://gitee.com/HumorGeeks/img/raw/master//img/202109222310920.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222310920.png;charset=UTF-8" alt="image-20200609150130674" style="zoom:33%;" />
 
 ## 二级缓存执行流程
 
 原本会话是通过Executor实现SQL调用，这里基于装饰器模式使用CachingExecutor对SQL调用逻辑进行拦截。以嵌入二级缓存相关逻辑。
 
-![image-20200609152830260](https://gitee.com/HumorGeeks/img/raw/master//img/202109222310708.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222310708.png;charset=UTF-8" alt="image-20200609152830260" style="zoom:33%;" />
 
 ### 查询操作query
 
@@ -1018,7 +1018,7 @@ int update(Statement statement)
 
 StatementHandler 有三个子类SimpleStatementHandler、PreparedStatementHandler、CallableStatementHandler，分别对应JDBC中的Statement、PreparedStatement、CallableStatement。
 
-![image-20200609162623645](https://gitee.com/HumorGeeks/img/raw/master//img/202109222310784.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222310784.png;charset=UTF-8" alt="image-20200609162623645" style="zoom:33%;" />
 
 大部分情况下都是预处理器，所以接下我们就针对PreparedStatementHandler来讲解其实现过程。
 
@@ -1152,13 +1152,13 @@ MetaObjbt 解析获取流程如下图：
 
 映射是指返回的ResultSet列与Java Bean 属性之间的对应关系。通过ResultMapping进行映射描述，在用ResultMap封装成一个整体。
 
-![image-20200624185839752](https://gitee.com/HumorGeeks/img/raw/master//img/202109222311931.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222311931.png;charset=UTF-8" alt="image-20200624185839752" style="zoom:33%;" />
 
 ### 映射设置
 
 一个ResultMap 中包含多个ResultMapping 表示一个具体的JAVA属性到列的映射，其主要值如下：
 
-![image-20200624190400867](https://gitee.com/HumorGeeks/img/raw/master//img/202109222311372.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222311372.png;charset=UTF-8" alt="image-20200624190400867" style="zoom: 50%;" />
 
 ResultMapping 有多种表现形式如下：
 
@@ -1248,7 +1248,7 @@ public static class ConfigurationFactory {
 
 代理过程发生在结果集解析 交创建对象之后(DefaultResultSetHandler.createResultObject)，如果对应的属性设置了懒加载，则会通过ProxyFactory 创建代理对象，该对象继承自原对象,然后将对象的值全部拷贝到代理对像。并设置相应MethodHandler（原对象直接抛弃）
 
-![image-20200617180130478](https://gitee.com/HumorGeeks/img/raw/master//img/202109230959306.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109230959306.png;charset=UTF-8" alt="image-20200617180130478" style="zoom: 50%;" />
 
 ## 联合查询&嵌套映射
 
@@ -1258,11 +1258,11 @@ public static class ConfigurationFactory {
 
 **简单映射**：即返回的结果集列与对象属性是1对1的关系，这种情况下ResultHandler 会依次遍历结果集中的行，并给每一行创建一个对象，然后在遍历结果集列填充至对象的映射属性。
 
-![image-20200624152820045](https://gitee.com/HumorGeeks/img/raw/master//img/202109230959351.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109230959351.png;charset=UTF-8" alt="image-20200624152820045" style="zoom:50%;" />
 
 **嵌套映射**：但很多时候对象结构， 是树级程现的。即对象中包含对象。与之对应映射也是这种嵌套结构。
 
-![image-20200617182311560](https://gitee.com/HumorGeeks/img/raw/master//img/202109230959926.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109230959926.png;charset=UTF-8" alt="image-20200617182311560" style="zoom:50%;" />
 
 在配置方式上可以直接配置子映射，也以引入外部映射和自动映射。共有两类嵌套结构分别是一对多 与多对多 。
 
@@ -1290,7 +1290,7 @@ where a.id = 1;
 
 ![image-20200624160944086](https://gitee.com/HumorGeeks/img/raw/master//img/202109230959144.png;charset=UTF-8)
 
-![image-20200624161317561](https://gitee.com/HumorGeeks/img/raw/master//img/202109230959551.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109230959551.png;charset=UTF-8" alt="image-20200624161317561" style="zoom:50%;" />
 
 上述两个例子中，每一行都会产生两个对象，一个Blog父对象，一个User子对象。
 
@@ -1311,7 +1311,7 @@ where a.id = 1;
 
 ![image-20200624162741455](http://www.coderead.cn/p/mybatis/html/img/image-20200624162741455.png)
 
-![image-20200624163754352](https://gitee.com/HumorGeeks/img/raw/master//img/202109231000195.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109231000195.png;charset=UTF-8" alt="image-20200624163754352" style="zoom:50%;" />
 
 上述结果中，相同的三行Blog将会创建一个Blog，同时分别创建三个不同的Comment组成一个集合，并填充至comments对象。
 
@@ -1319,7 +1319,7 @@ where a.id = 1;
 
 在1对多的查询过程中，是基于RowKey来断定两行数据是否相同的 。RowKey一般基于。但有时并不会指定 这时将会采用其它映射字段创建RowKey具体规则如下：
 
-![image-20200624164827237](https://gitee.com/HumorGeeks/img/raw/master//img/202109231000809.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109231000809.png;charset=UTF-8" alt="image-20200624164827237" style="zoom: 50%;" />
 
 ### 结果集解析流程
 
@@ -1384,7 +1384,7 @@ where a.id = 1;
 - trim (where, set)
 - foreach
 
-![image-20200806120703019](https://gitee.com/HumorGeeks/img/raw/master//img/202109231001973.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109231001973.png;charset=UTF-8" alt="image-20200806120703019" style="zoom: 50%;" />
 
 ### if
 
@@ -1519,7 +1519,7 @@ public boolean apply(DynamicContext context) {
 }
 ```
 
-![image-20200806165121810](https://gitee.com/HumorGeeks/img/raw/master//img/202109231002397.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109231002397.png;charset=UTF-8" alt="image-20200806165121810" style="zoom: 50%;" />
 
 访问完所有节点之后，就会生成一个SQL字符串，但这个并不是可直接执行的SQL,因为里面的参数还是表达式的形式`#{name=name}` 就需要通过`SqlSourceBuilder` 来构建可执行的SQL和参数映射`ParameterMapping` 。然后才能生成BoundSql。下图表示了在上下文中执行所有节点之后，最生成BoundSql。
 
@@ -1542,7 +1542,7 @@ public boolean apply(DynamicContext context) {
 
 SqlSource 是基于XML解析而来，解析的底层是使用Dom4j 把XML解析成一个个子节点，在通过 **XMLScriptBuilder** 遍历这些子节点最后生成对应的Sql源。其解析流程如下图：
 
-![image-20200806173121708](https://gitee.com/HumorGeeks/img/raw/master//img/202109231002093.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109231002093.png;charset=UTF-8" alt="image-20200806173121708" style="zoom: 33%;" />
 
 从图中可以看出这是一种递归式的访问 所有节点，如果是文本节点就会直接创建TextNode 或StaticSqlNode。否则就会创建动态脚本节点如IfSqlNode等。这里每种动态节点都会对应的处理器(`NodeHandler`)来创建。创建好之后又会继续访问子节点，让递归继续下去。当然子节点所创建的SqNode 也会作为当前所创建的元素的子节点而存在。
 
@@ -1580,13 +1580,13 @@ Configuration 配置来源有三项：
 2. Mapper.xml SQL映射(MappedStatement) \结果集映射(ResultMapper)都来源于此。
 3. @Annotation SQL映射与结果集映射的另一种表达形式。
 
-![image-20200807101250310](https://gitee.com/HumorGeeks/img/raw/master//img/202109231002567.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109231002567.png;charset=UTF-8" alt="image-20200807101250310" style="zoom:33%;" />
 
 ## 配置元素
 
 Configuration 配置信息来源于xml和注解，每个文件和注解都是由若干个配置元素组成，并呈现嵌套关系，总体关系如下图所示：
 
-![image-20200807105008724](https://gitee.com/HumorGeeks/img/raw/master//img/202109231002079.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109231002079.png;charset=UTF-8" alt="image-20200807105008724" style="zoom:33%;" />
 
 关于各配置的使用请参见官网给出文档：https://mybatis.org/mybatis-3/zh/configuration.html#properties
 
@@ -1599,7 +1599,7 @@ Configuration 配置信息来源于xml和注解，每个文件和注解都是由
 3. 缓存<cache..> 或@CacheNamespace 由Cache对象承载
 4. 结果集映射 由ResultMap 对象承载
 
-![image-20200807105958166](https://gitee.com/HumorGeeks/img/raw/master//img/202109231002107.png;charset=UTF-8)
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109231002107.png;charset=UTF-8" alt="image-20200807105958166" style="zoom:33%;" />
 
 ## 配置文件解析
 
