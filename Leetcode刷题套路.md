@@ -1188,9 +1188,9 @@ class Solution {
 
 ### 7、动态规划
 
-### 1 D
+#### 1 D
 
-#### 1、子序列问题
+##### 1、子序列问题
 
 > 每一个 Node 代表一个状态 -》（index,current_subset）
 
@@ -1223,7 +1223,7 @@ class Solution {
  } 
 ~~~
 
-#### 2、Word Break
+##### 2、Word Break
 
 ~~~java
 dfs(state):
@@ -1264,7 +1264,7 @@ Boolean[] memo;
     }
 ~~~
 
-#### 3、唯一的二叉搜索树
+##### 3、唯一的二叉搜索树
 
 ~~~java
 class Solution {
@@ -1292,7 +1292,7 @@ class Solution {
 }
 ~~~
 
-#### 4、解码方法
+##### 4、解码方法
 
 ~~~java
 class Solution {
@@ -1328,14 +1328,14 @@ class Solution {
 }
 ~~~
 
-### 2 D
+#### 2 D
 
 > - （row,col）
 > - 2 个 1D Arrays
 > - 1D Arrays + K
 > - 1D Arrays -》 2D state
 
-#### 1、有多少种唯一的路径
+##### 1、有多少种唯一的路径
 
 ~~~java
 class Solution {
@@ -1387,7 +1387,7 @@ class Solution {
 }
 ~~~
 
-#### 2、最长公共子序列
+##### 2、最长公共子序列
 
 > **df**s(t1,t2,i,j)**
 >     **1. Base case : (i,j)越界--》return 0**
@@ -1429,9 +1429,9 @@ class Solution {
     }
 ~~~
 
-#### 3、分割数组的最大值
+##### 3、分割数组的最大值
 
-##### 1、正常解法
+###### 1、正常解法
 
 ~~~java
 /* dfs(nums,i,j)   m 表示分割成数组的个数 n 表示剩下元素的个数
@@ -1482,7 +1482,7 @@ private int dfs(int[] nums,int m,int n) {
 
 ~~~
 
-##### 2、正向 DP
+###### 2、正向 DP
 
 ~~~java
 /* 各自和最大值最小
@@ -1514,9 +1514,9 @@ public int spiltArray(int[] nums,int m) {
 }
 ~~~
 
-#### 4、最好的买卖股票的时间
+##### 4、最好的买卖股票的时间
 
-##### 1、正常解法
+###### 1、正常解法
 
 ~~~java
 /* 
@@ -1563,7 +1563,7 @@ private int dfs(int[] prices,int k,int n) {
 }
 ~~~
 
-##### 2、正向 DP
+###### 2、正向 DP
 
 ~~~java
 public int maxProfit(int k,int[] prices) {
@@ -1592,9 +1592,9 @@ public int maxProfit(int k,int[] prices) {
 }
 ~~~
 
-#### 5 、Stone Game
+##### 5 、Stone Game
 
-##### 1、正常解法
+###### 1、正常解法
 
 ~~~java
 /*
@@ -1627,7 +1627,7 @@ private int dfs(int[] piles,int i,int j) {
 }
 ~~~
 
-##### 2、正向 DP
+###### 2、正向 DP
 
 ~~~java
 public boolean stoneGame(int[] piles) {
@@ -1646,9 +1646,9 @@ public boolean stoneGame(int[] piles) {
 }
 ~~~
 
-#### 6、最长回文字符串
+##### 6、最长回文字符串
 
-##### 1、基本解法
+###### 1、基本解法
 
 ~~~java
 /*
@@ -1695,7 +1695,7 @@ private boolean dfs(String s,int i,int j) {
 
 ~~~
 
-##### 2、正向 DP
+###### 2、正向 DP
 
 ~~~java
 public String longestPalindrome(String s) {
