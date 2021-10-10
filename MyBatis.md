@@ -33,7 +33,8 @@ readResultSet(resultSet);
 
 ## 会话(SqlSession)
 
-SqlSession 是myBatis的门面(采用门面模式设计)，核心作用是为用户提供API。API包括增、删、改、查以及提交、关闭等。其自身是没有能力处理这些请求的，所以内部会包含一个唯一的执行器 Executor，所有请求都会交给执行器来处理。如下图中SqlSession接收用户“修改”请求，然后转交给Executor。
+SqlSession 是myBatis的门面(采用门面模式设计)，核心作用是为用户提供API。API包括增、删、改、查以及提交、关闭等。其自身是没有能力处理这些请求的，所以内部会包含一个唯一的执行器
+Executor，所有请求都会交给执行器来处理。如下图中SqlSession接收用户“修改”请求，然后转交给Executor。
 
 <img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222300237.png;charset=UTF-8" alt="image-20200514135118126" style="zoom:33%;" />
 
@@ -48,7 +49,8 @@ Executor是一个大管家，核心功能包括：缓存维护、获取动态SQL
 - 获取动态sql：SqlSource
 - 调用jdbc：StatementHandler
 
-上述组件中前三个和Executor是1对1关系，只有StatementHandler是1对多。每执行一次SQL 就会构造一个新的StatementHandler。想必你也能猜出StatementHandler的作用就是专门和JDBC打交道，执行SQL的。
+上述组件中前三个和Executor是1对1关系，只有StatementHandler是1对多。每执行一次SQL
+就会构造一个新的StatementHandler。想必你也能猜出StatementHandler的作用就是专门和JDBC打交道，执行SQL的。
 
 ## SQL处理器(StatementHandler)
 
@@ -77,7 +79,8 @@ Executor是一个大管家，核心功能包括：缓存维护、获取动态SQL
 
 你选择来读MyBatis源码，那必定有两个前提，第一你知道MyBatis是干什么的，第二你用过MyBatis。（如果没有这两前提，建议还是从基础使用学起，网上基础教程一大把）
 
-MyBatis是干什么的？抛开什么半ORM框架、DAO组件、跟Hibernate类似等不说。咱给个简单定义就是操作数据库的，执行SQL的。这就是它的本质，研究源码就是看本质。java中执行SQL都离不开 JDBC，myBatis也不例外。其关系如下图：
+MyBatis是干什么的？抛开什么半ORM框架、DAO组件、跟Hibernate类似等不说。咱给个简单定义就是操作数据库的，执行SQL的。这就是它的本质，研究源码就是看本质。java中执行SQL都离不开
+JDBC，myBatis也不例外。其关系如下图：
 
 ![image-20200219112639449](https://gitee.com/HumorGeeks/img/raw/master//img/202109222301161.png;charset=UTF-8)
 
@@ -103,7 +106,7 @@ MyBatis是干什么的？抛开什么半ORM框架、DAO组件、跟Hibernate类�
 
 最后这个方法代理MapperMethod 怎么表示呢？这就是叫外卖呀！太形像了。你的点餐过程被外卖公司代理了，但最终还是要由服务员接单，后厨制作。
 
- 当然里还有很多细节，但不用急于一时后续在慢慢展开研究。而你现需要记住的是执行过程即：方法代理==》会话==》执行器==》JDBC
+当然里还有很多细节，但不用急于一时后续在慢慢展开研究。而你现需要记住的是执行过程即：方法代理==》会话==》执行器==》JDBC
 
 最后把涉及到类标注在下表。
 
@@ -153,8 +156,10 @@ public interface KeyGenerator {
 
 如代码所见 KeyGenerator 非常的简单，主要是通过两个拦截方法实现的：
 
-- Jdbc3KeyGenerator：主要基于 java.sql.Statement.getGeneratedKeys 的主键返回接口实现的，所以他不需要 processBefore 方法，只需要在获取到结果后使用 processAfter 拦截，然后用反射将主键设置到参数中即可；
-- SelectKeyGenerator：主要是通过 XML 配置或者注解设置 **selectKey** ，然后单独发出查询语句，在返回拦截方法中使用反射设置主键，其中两个拦截方法只能使用其一，在 **selectKey.order** 属性中设置 `AFTER|BEFORE` 来确定；
+- Jdbc3KeyGenerator：主要基于 java.sql.Statement.getGeneratedKeys 的主键返回接口实现的，所以他不需要 processBefore 方法，只需要在获取到结果后使用
+  processAfter 拦截，然后用反射将主键设置到参数中即可；
+- SelectKeyGenerator：主要是通过 XML 配置或者注解设置 **selectKey** ，然后单独发出查询语句，在返回拦截方法中使用反射设置主键，其中两个拦截方法只能使用其一，在 **selectKey.order**
+  属性中设置 `AFTER|BEFORE` 来确定；
 
 **拦截时机：**
 
@@ -178,7 +183,8 @@ protected void generateKeys(Object parameter) {
 }
 ```
 
-processAfter 则是在完成插入返回结果之前，但是 PreparedStatementHandler、SimpleStatementHandler、CallableStatementHandler 的代码稍微有一点不同，但是位置是不变的，这里以 PreparedStatementHandler 举例：
+processAfter 则是在完成插入返回结果之前，但是 PreparedStatementHandler、SimpleStatementHandler、CallableStatementHandler
+的代码稍微有一点不同，但是位置是不变的，这里以 PreparedStatementHandler 举例：
 
 ```
 @Override
@@ -195,7 +201,8 @@ public int update(Statement statement) throws SQLException {
 
 ## 二、Jdbc3KeyGenerator
 
-上面也将了 Jdbc3KeyGenerator 是主要基于 java.sql.Statement.getGeneratedKeys 的主键返回接口实现的，但是 Statement 和 PreparedStatement 稍有不同，所以导致了 PreparedStatementHandler、SimpleStatementHandler 的 update 方法稍有不同：
+上面也将了 Jdbc3KeyGenerator 是主要基于 java.sql.Statement.getGeneratedKeys 的主键返回接口实现的，但是 Statement 和 PreparedStatement 稍有不同，所以导致了
+PreparedStatementHandler、SimpleStatementHandler 的 update 方法稍有不同：
 
 ```
 // java.sql.Connection
@@ -237,7 +244,8 @@ public void testJDBC3() {
 }
 ```
 
-这里的 User 表以 id 为主键，但是代码中我传的 columnNames 都不符合，而结果仍然可以正确的返回主键，主要是因为在 mybatis 的驱动中只要 columnNames.length > 1就可以了，所以在具体使用的时候还要注意不同数据库驱动实现不同所带来的影响；
+这里的 User 表以 id 为主键，但是代码中我传的 columnNames 都不符合，而结果仍然可以正确的返回主键，主要是因为在 mybatis 的驱动中只要 columnNames.length >
+1就可以了，所以在具体使用的时候还要注意不同数据库驱动实现不同所带来的影响；
 
 上面将了 Statement 和 PreparedStatement 指定返回主键的位置不同，在下面就能很清楚的看到：
 
@@ -416,7 +424,8 @@ public interface Executor {
 1. BaseExecutor：执行器基类，基础方法都放置在此。
 2. SimpleExecutor：默认执行器
 3. ReuseExecutor：重用执行器，相同sql的statement 将会被缓存已重复利用
-4. BatchExecutor：批处理执行器，基于 JDBC 的 `addBatch、executeBatch` 功能，并且在当前 sql 和上一条 sql 完全一样的时候，重用 Statement，在调用 `doFlushStatements` 的时候，将数据刷新到数据库
+4. BatchExecutor：批处理执行器，基于 JDBC 的 `addBatch、executeBatch` 功能，并且在当前 sql 和上一条 sql 完全一样的时候，重用
+   Statement，在调用 `doFlushStatements` 的时候，将数据刷新到数据库
 5. CachingExecutor：缓存执行器，装饰器模式，在开启二级缓存的时候。会在上面三种执行器的外面包上 CachingExecutor
 
 ## 执行过程
@@ -468,7 +477,8 @@ Executor、StatementHandler、ResultSetHandler他们是如何交互的呢？通�
 </configuration>
 ```
 
-这里需要注意的是，添加的插件是有顺序的，因为在解析的时候是依次放入 ArrayList 里面，而调用的时候其顺序为：**2 > 1 > target > 1 > 2**；（插件的顺序可能会影响执行的流程）更加细致的讲解可以参考 [QueryInterceptor 规范](https://pagehelper.github.io/docs/interceptor/) ;
+这里需要注意的是，添加的插件是有顺序的，因为在解析的时候是依次放入 ArrayList 里面，而调用的时候其顺序为：**2 > 1 > target > 1 > 2**
+；（插件的顺序可能会影响执行的流程）更加细致的讲解可以参考 [QueryInterceptor 规范](https://pagehelper.github.io/docs/interceptor/) ;
 
 然后当插件初始化完成之后，添加插件的流程如下：
 
@@ -557,7 +567,8 @@ public class ExamplePlugin implements Interceptor {
 }
 ```
 
-这里就指定了拦截 Executor 的具有相应方法的 update、query 方法；注解的代码很简单，大家可以自行查看；然后通过 getSignatureMap 方法反射取出对应的 Method 对象，在通过 getAllInterfaces 方法判断，目标对象是否有对应的方法，有就生成代理对象，没有就直接反对目标对象；
+这里就指定了拦截 Executor 的具有相应方法的 update、query 方法；注解的代码很简单，大家可以自行查看；然后通过 getSignatureMap 方法反射取出对应的 Method 对象，在通过
+getAllInterfaces 方法判断，目标对象是否有对应的方法，有就生成代理对象，没有就直接反对目标对象；
 
 在调用的时候：
 
@@ -577,7 +588,8 @@ public Object invoke(Object proxy, Method method, Object[] args) throws Throwabl
 
 ## 二、PageHelper 拦截器分析
 
-mybatis 插件我们平时使用最多的就是分页插件了，这里以 PageHelper 为例，其使用方法可以查看相应的文档 [如何使用分页插件](https://pagehelper.github.io/docs/howtouse/)，因为官方文档讲解的很详细了，我这里就简单补充分页插件需要做哪几件事情；
+mybatis 插件我们平时使用最多的就是分页插件了，这里以 PageHelper
+为例，其使用方法可以查看相应的文档 [如何使用分页插件](https://pagehelper.github.io/docs/howtouse/)，因为官方文档讲解的很详细了，我这里就简单补充分页插件需要做哪几件事情；
 
 **使用：**
 
@@ -586,7 +598,8 @@ PageHelper.startPage(1, 2);
 List<User> list = userMapper1.getAll();
 ```
 
-PageHelper 还有很多中使用方式，这是最常用的一种，他其实就是在 ThreadLocal 中设置了 Page 对象，能取到就代表需要分页，在分页完成后在移除，这样就不会导致其他方法分页；（PageHelper 使用的其他方法，也是围绕 Page 对象的设置进行的）
+PageHelper 还有很多中使用方式，这是最常用的一种，他其实就是在 ThreadLocal 中设置了 Page 对象，能取到就代表需要分页，在分页完成后在移除，这样就不会导致其他方法分页；（PageHelper
+使用的其他方法，也是围绕 Page 对象的设置进行的）
 
 ```java
 protected static final ThreadLocal<Page> LOCAL_PAGE = new ThreadLocal<Page>();
@@ -685,7 +698,8 @@ MyBatis是一个Dao层映射框架，底层还是用的JDBC来访问数据库，
 
 具体代码我就不贴了，不懂的自行百度。
 
-这里重点说一下预编译器 Statement，通过该组件来发送对应的SQL与参数。它有三种类型：分别是简单Statement，预处理Statement和存储过程Statement。后者继承自前者，也就是说简单执行器的所有功能，预处理执行器和存储过程执行器都有。
+这里重点说一下预编译器
+Statement，通过该组件来发送对应的SQL与参数。它有三种类型：分别是简单Statement，预处理Statement和存储过程Statement。后者继承自前者，也就是说简单执行器的所有功能，预处理执行器和存储过程执行器都有。
 
 <img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222306184.png;charset=UTF-8" alt="image-20200603104356417" style="zoom:33%;" />
 
@@ -700,7 +714,7 @@ MyBatis是一个Dao层映射框架，底层还是用的JDBC来访问数据库，
 
 ## MyBatis执行过程
 
- 回顾完JDBC，我们在回到MyBatis的执行流程。这时很多同学都急如去翻找MyBatis调用JDBC相关代码，我不太建议先这么做，一是翻起来比较麻烦，二是没那个必要，因为就算翻到了也不能说明你弄了MyBatis框架。如果你硬要去翻推荐大家可以用源码地图来翻。[点击访问](http://www.coderead.cn/p/mybatis/map/file/修改.map)
+回顾完JDBC，我们在回到MyBatis的执行流程。这时很多同学都急如去翻找MyBatis调用JDBC相关代码，我不太建议先这么做，一是翻起来比较麻烦，二是没那个必要，因为就算翻到了也不能说明你弄了MyBatis框架。如果你硬要去翻推荐大家可以用源码地图来翻。[点击访问](http://www.coderead.cn/p/mybatis/map/file/修改.map)
 
 > 小贴士: 选中节点按F3可直接查看源码
 
@@ -735,7 +749,8 @@ Executor是MyBatis执行者接口，我们在次确认一下，执行器的功�
 
 ### 简单执行器
 
- SimpleExecutor是默认执行器，它的行为是每处理一次会话当中的SQl请求都会通过对应的StatementHandler 构建一个新个Statement，这就会导致即使是相同SQL语句也无法重用Statement,所以就有了（ReuseExecutor）可重用执行器
+SimpleExecutor是默认执行器，它的行为是每处理一次会话当中的SQl请求都会通过对应的StatementHandler
+构建一个新个Statement，这就会导致即使是相同SQL语句也无法重用Statement,所以就有了（ReuseExecutor）可重用执行器
 
 ### 可重用执行器
 
@@ -745,9 +760,11 @@ ReuseExecutor 区别在于他会将在会话期间内的Statement进行缓存，
 
 ### 批处理执行器
 
- BatchExecutor 顾名思议，它就是用来作批处理的。但会将所 有SQL请求集中起来，最后调用Executor.flushStatements() 方法时一次性将所有请求发送至数据库。
+BatchExecutor 顾名思议，它就是用来作批处理的。但会将所 有SQL请求集中起来，最后调用Executor.flushStatements() 方法时一次性将所有请求发送至数据库。
 
-这里它是利用了Statement中的addBath 机制吗？不一定，因为只有连续相同的SQL语句并且相同的SQL映射声明，才会重用Statement，并利用其批处理功能。否则会构建一个新的Satement然后在flushStatements() 时一次执行。这么做的原因是它要保证执行顺序。跟调用顺序一至。
+这里它是利用了Statement中的addBath
+机制吗？不一定，因为只有连续相同的SQL语句并且相同的SQL映射声明，才会重用Statement，并利用其批处理功能。否则会构建一个新的Satement然后在flushStatements()
+时一次执行。这么做的原因是它要保证执行顺序。跟调用顺序一至。
 
 <img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222307812.png;charset=UTF-8" alt="image-20200603150400952" style="zoom:33%;" />
 
@@ -757,15 +774,20 @@ ReuseExecutor 区别在于他会将在会话期间内的Statement进行缓存，
 
 ### 基础执行器
 
-BaseExecutor 基础执行器主要是用于维护缓存和事物。事物是通过会话中调用commit、rollback进行管理。重点在于缓存这块它是如何处理的? (这里的缓存是指一级缓存）,它实现了Executor中的Query与update方法。会话中SQL请求，正是调用的这两个方法。Query方法中处理一级缓存逻辑，即根据SQL及参数判断缓存中是否存在数据，有就走缓存。否则就会调用子类的doQuery() 方法去查询数据库,然后在设置缓存。在doUpdate() 中主要是用于清空缓存。
+BaseExecutor 基础执行器主要是用于维护缓存和事物。事物是通过会话中调用commit、rollback进行管理。重点在于缓存这块它是如何处理的? (
+这里的缓存是指一级缓存）,它实现了Executor中的Query与update方法。会话中SQL请求，正是调用的这两个方法。Query方法中处理一级缓存逻辑，即根据SQL及参数判断缓存中是否存在数据，有就走缓存。否则就会调用子类的doQuery()
+方法去查询数据库,然后在设置缓存。在doUpdate() 中主要是用于清空缓存。
 
-<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222307900.png;charset=UTF-8" alt="image-20200603160545257" style="zoom: 33%;" />、
+<img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222307900.png;charset=UTF-8" alt="image-20200603160545257" style="zoom: 33%;" />
+、
 
 当添加BaseExecutor 结构如上图。
 
 ### 缓存执行器
 
-查看Executor 的子类还有一个CachingExecutor,这是用于处理二级缓存的。为什么不把它和一级缓存一起处理呢？因为二级缓存和一级缓存相对独立的逻辑，而且二级缓存可以通过参数控制关闭，而一级缓存是不可以的。综上原因把二级缓存单独抽出来处理。抽取的方式采用了装饰者设计模式，即在CachingExecutor 对原有的执行器进行包装，处理完二级缓存逻辑之后，把SQL执行相关的逻辑交给实至的Executor处理。
+查看Executor
+的子类还有一个CachingExecutor,这是用于处理二级缓存的。为什么不把它和一级缓存一起处理呢？因为二级缓存和一级缓存相对独立的逻辑，而且二级缓存可以通过参数控制关闭，而一级缓存是不可以的。综上原因把二级缓存单独抽出来处理。抽取的方式采用了装饰者设计模式，即在CachingExecutor
+对原有的执行器进行包装，处理完二级缓存逻辑之后，把SQL执行相关的逻辑交给实至的Executor处理。
 
 当把CachingExecutor加进来之后整体结构如下图所示。
 
@@ -773,7 +795,8 @@ BaseExecutor 基础执行器主要是用于维护缓存和事物。事物是通�
 
 ## 执行器总结
 
-执行器的种类有：基础执行器、简单执行器、重用执行器和批处理执行器，此外通过装饰器形式添加了一个缓存执行器。对应功能包括缓存处理、事物处理、重用处理以及批处理，这些是多个SQL执行中有**共性**地方。执行器存在的意义就是去处理这些共性。 如果说每个SQL调用是独立的，不需要缓存，不需要事物也不需集中在一起进行批处理的话，Executor也就没有存在的必要。但事实上这些都是MyBatis中不可或缺的特性。所以才设计出Executor这个组件。
+执行器的种类有：基础执行器、简单执行器、重用执行器和批处理执行器，此外通过装饰器形式添加了一个缓存执行器。对应功能包括缓存处理、事物处理、重用处理以及批处理，这些是多个SQL执行中有**共性**地方。执行器存在的意义就是去处理这些共性。
+如果说每个SQL调用是独立的，不需要缓存，不需要事物也不需集中在一起进行批处理的话，Executor也就没有存在的必要。但事实上这些都是MyBatis中不可或缺的特性。所以才设计出Executor这个组件。
 
 <img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222308664.png;charset=UTF-8" alt="image-20200603170208367" style="zoom: 67%;" />
 
@@ -788,8 +811,6 @@ myBatis中存在两个缓存，一级缓存和二级缓存。
 - 一级缓存：也叫做会话级缓存，生命周期仅存在于当前会话，不可以直接关关闭。但可以通过flushCache和localCacheScope对其做相应控制。
 
 - 二级缓存：也叫应用级性缓存，缓存对象存在于整个应用周期，而且可以跨线程使用。
-
-  
 
 关于二级缓存将在后续章节，详细说明。文本先聚焦一级缓存。首先来看如何才能命中一级缓存。
 
@@ -820,7 +841,8 @@ myBatis中存在两个缓存，一级缓存和二级缓存。
 
 ![image-20200603175115072](https://gitee.com/HumorGeeks/img/raw/master//img/202109222308732.png;charset=UTF-8)
 
-本文所要论述的一级缓存逻辑就存在于 BaseExecutor (基础执行器)里面。当会话接收到查询请求之后，会交给执行器的Query方法，在这里会通过 Sql、参数、分页条件等参数创建一个缓存key，在基于这个key去 PerpetualCache中查找对应的缓存值，如果有主直接返回。没有就会查询数据库，然后在填充缓存。
+本文所要论述的一级缓存逻辑就存在于 BaseExecutor (基础执行器)里面。当会话接收到查询请求之后，会交给执行器的Query方法，在这里会通过 Sql、参数、分页条件等参数创建一个缓存key，在基于这个key去
+PerpetualCache中查找对应的缓存值，如果有主直接返回。没有就会查询数据库，然后在填充缓存。
 
 <img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222308203.png;charset=UTF-8" alt="image-20200603175917082" style="zoom: 33%;" />
 
@@ -839,7 +861,8 @@ myBatis中存在两个缓存，一级缓存和二级缓存。
 
 ## MyBatis集成Spring后一级缓存失效的问题？
 
-很多人发现，集成一级缓存后会话失效了，以为是spring Bug ，真正原因是Spring 对SqlSession进行了封装，通过SqlSessionTemplae ，使得每次调用Sql，都会重新构建一个SqlSession，具体参见SqlSessionInterceptor。而根据前面所学，一级缓存必须是同一会话才能命中,所以在这些场景当中不能命中。
+很多人发现，集成一级缓存后会话失效了，以为是spring Bug ，真正原因是Spring 对SqlSession进行了封装，通过SqlSessionTemplae
+，使得每次调用Sql，都会重新构建一个SqlSession，具体参见SqlSessionInterceptor。而根据前面所学，一级缓存必须是同一会话才能命中,所以在这些场景当中不能命中。
 
 怎么解决呢？给Spring 添加事物 即可。添加事物之后，SqlSessionInterceptor(会话拦截器)就会去判断两次请求是否在同一事物当中，如果是就会共用同一个SqlSession会话来解决。
 
@@ -907,7 +930,9 @@ myBatis中存在两个缓存，一级缓存和二级缓存。
 
 ### 缓存空间声明
 
-二级默认缓存默认是不开启的，需要为其声明缓存空间才可以使用，通过@CacheNamespace 或 为指定的MappedStatement声明。声明之后该缓存为该Mapper所独有，其它Mapper不能访问。如需要多个Mapper共享一个缓存空间可通过@CacheNamespaceRef 或进行引用同一个缓存空间。@CacheNamespace 详细配置见下表：
+二级默认缓存默认是不开启的，需要为其声明缓存空间才可以使用，通过@CacheNamespace 或
+为指定的MappedStatement声明。声明之后该缓存为该Mapper所独有，其它Mapper不能访问。如需要多个Mapper共享一个缓存空间可通过@CacheNamespaceRef
+或进行引用同一个缓存空间。@CacheNamespace 详细配置见下表：
 
 | 配置           | 说明                                                     |
 | -------------- | -------------------------------------------------------- |
@@ -948,7 +973,8 @@ myBatis中存在两个缓存，一级缓存和二级缓存。
 
 ## 二级缓存结构
 
-为了实现会话提交之后才变更二级缓存，MyBatis为每个会话设立了若干个暂存区，当前会话对指定缓存空间的变更，都存放在对应的暂存区，当会话提交之后才会提交到每个暂存区对应的缓存空间。为了统一管理这些暂存区，每个会话都一个唯一的事物缓存管理 器。所以这里暂存区也可叫做事物缓存。
+为了实现会话提交之后才变更二级缓存，MyBatis为每个会话设立了若干个暂存区，当前会话对指定缓存空间的变更，都存放在对应的暂存区，当会话提交之后才会提交到每个暂存区对应的缓存空间。为了统一管理这些暂存区，每个会话都一个唯一的事物缓存管理
+器。所以这里暂存区也可叫做事物缓存。
 
 <img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222309360.png;charset=UTF-8" alt="image-20200609145840368" style="zoom:33%;" />
 
@@ -996,7 +1022,7 @@ JDBC处理器，基于JDBC构建JDBC Statement,并设置参数，然后执行Sql
 
 ## StatementHandler结构
 
- StatementHandler接口定义了JDBC操作的相关方法如下：
+StatementHandler接口定义了JDBC操作的相关方法如下：
 
 ```java
 // 基于JDBC 声明Statement
@@ -1016,7 +1042,8 @@ int update(Statement statement)
     throws SQLException;
 ```
 
-StatementHandler 有三个子类SimpleStatementHandler、PreparedStatementHandler、CallableStatementHandler，分别对应JDBC中的Statement、PreparedStatement、CallableStatement。
+StatementHandler
+有三个子类SimpleStatementHandler、PreparedStatementHandler、CallableStatementHandler，分别对应JDBC中的Statement、PreparedStatement、CallableStatement。
 
 <img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109222310784.png;charset=UTF-8" alt="image-20200609162623645" style="zoom:33%;" />
 
@@ -1097,22 +1124,23 @@ User selectByNameOrAge(@Param("name") String name, @Param("user") User user);
 
 ## 映射工具MetaObject
 
-所谓映射是指结果集中的列填充至JAVA Bean属性。这就必须用到反射，而Bean的属性 多种多样的有普通属性、对象、集合、Map都有可能。为了更加方便的操作Bean的属性，MyBatis提供了MeataObject 工具类，其简化了对象属性的操作。其具体功能如下：
+所谓映射是指结果集中的列填充至JAVA Bean属性。这就必须用到反射，而Bean的属性 多种多样的有普通属性、对象、集合、Map都有可能。为了更加方便的操作Bean的属性，MyBatis提供了MeataObject
+工具类，其简化了对象属性的操作。其具体功能如下：
 
 1. **查找属性**：勿略大小写，支持驼峰、支持子属性 如：“blog.comment.user_name”
 
 2. 获取属性
 
-   1. 基于点获取子属性 “user.name”
-   2. 基于索引获取列表值 “users[1].id”
-   3. 基于key获取map值 “user[name]”
+    1. 基于点获取子属性 “user.name”
+    2. 基于索引获取列表值 “users[1].id”
+    3. 基于key获取map值 “user[name]”
 
 3. 设置属性
 
    ：
 
-   1. 可设置子属性值
-   2. 支持自动创建子属性(必须带有空参构造方法，且不能是集合)
+    1. 可设置子属性值
+    2. 支持自动创建子属性(必须带有空参构造方法，且不能是集合)
 
 为了实现上述功能，MetaObject 相继依赖了**BeanWrapper**、**MetaClass**、**Reflector**。这四个对象关系如下：
 
@@ -1142,7 +1170,8 @@ MetaObjbt 解析获取流程如下图：
 
 **MeataObject.getValue()**
 
-获取值的入品，首先根据属性名"comments[0].user.name" 解析成PropertyTokenizer，并基于属性中的“.” 来判断是否为子属性值，如果是就递归调用getValue()获取子属性对象。然后在递归调用getValue()获取子属性下的属性。直到最后的name属性获。
+获取值的入品，首先根据属性名"comments[0].user.name" 解析成PropertyTokenizer，并基于属性中的“.” 来判断是否为子属性值，如果是就递归调用getValue()
+获取子属性对象。然后在递归调用getValue()获取子属性下的属性。直到最后的name属性获。
 
 **MeataObject.setValue()**
 
@@ -1210,7 +1239,8 @@ ResultMapping 有多种表现形式如下：
 </resultMap>
 ```
 
-在嵌套子查询中指定 fetchType="lazy" 即可设置懒加载。在调用getComments时才会真正加载。此外调用："equals", "clone", "hashCode", "toString" 均会触发当前对象所有未执行的懒加载。通过设置全局参数aggressiveLazyLoading=true ，也可指定调用对象任意方法触发所有懒加载。
+在嵌套子查询中指定 fetchType="lazy" 即可设置懒加载。在调用getComments时才会真正加载。此外调用："equals", "clone", "hashCode", "toString"
+均会触发当前对象所有未执行的懒加载。通过设置全局参数aggressiveLazyLoading=true ，也可指定调用对象任意方法触发所有懒加载。
 
 | 参数                  | 描述                                     |
 | --------------------- | ---------------------------------------- |
@@ -1246,7 +1276,8 @@ public static class ConfigurationFactory {
 
 ### Bean代理过程
 
-代理过程发生在结果集解析 交创建对象之后(DefaultResultSetHandler.createResultObject)，如果对应的属性设置了懒加载，则会通过ProxyFactory 创建代理对象，该对象继承自原对象,然后将对象的值全部拷贝到代理对像。并设置相应MethodHandler（原对象直接抛弃）
+代理过程发生在结果集解析 交创建对象之后(DefaultResultSetHandler.createResultObject)，如果对应的属性设置了懒加载，则会通过ProxyFactory
+创建代理对象，该对象继承自原对象,然后将对象的值全部拷贝到代理对像。并设置相应MethodHandler（原对象直接抛弃）
 
 <img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109230959306.png;charset=UTF-8" alt="image-20200617180130478" style="zoom: 50%;" />
 
@@ -1353,7 +1384,7 @@ where a.id = 1;
 
 解析并填充嵌套结果集映射，遍历所有嵌套映射,然后获取其嵌套ResultMap。接着创建RowKey 去获取暂存区的值。然后调用getRowValue 获取属性对象。最后填充至父对象。
 
->  如果通过RowKey能获取到属性对象，它还是会去调用getRowsValue，因为有可能属下还存在未解析的属性。
+> 如果通过RowKey能获取到属性对象，它还是会去调用getRowsValue，因为有可能属下还存在未解析的属性。
 
 ## 循环引用
 
@@ -1365,7 +1396,8 @@ where a.id = 1;
 
 ![image-20200624180856644](https://gitee.com/HumorGeeks/img/raw/master//img/202109231000955.png;charset=UTF-8)
 
-这种情况会导致解析死循环吗？答案是不会。DefaultResultSetHandler 在解析复合映射之前都会在上下文中填充当前解析对象（使用resultMapId做为Key）。如果子属性又映射引用了父映射ID，就可以直接获取不需要在去解析父对象。具体流程如下：
+这种情况会导致解析死循环吗？答案是不会。DefaultResultSetHandler
+在解析复合映射之前都会在上下文中填充当前解析对象（使用resultMapId做为Key）。如果子属性又映射引用了父映射ID，就可以直接获取不需要在去解析父对象。具体流程如下：
 
 ![image-20200624181307366](https://gitee.com/HumorGeeks/img/raw/master//img/202109231000364.png;charset=UTF-8)
 
@@ -1487,7 +1519,8 @@ OGNL全称是对象导航图语言（Object Graph Navigation Language）是一�
 
 #### 动态脚本结构
 
-脚本之间是呈现嵌套关系的。比如`if`元素中会包含一个`MixedSqlNode` ，而`MixedSqlNode`下又会包含1至1至多个其它节点。最后组成一课脚本语法树。如下面左边的SQL元素组成右边的语法树。在节点最底层一定是一个`StaticTextNode`或 `TextNode`
+脚本之间是呈现嵌套关系的。比如`if`元素中会包含一个`MixedSqlNode` ，而`MixedSqlNode`
+下又会包含1至1至多个其它节点。最后组成一课脚本语法树。如下面左边的SQL元素组成右边的语法树。在节点最底层一定是一个`StaticTextNode`或 `TextNode`
 
 ![image-20200806120550330](https://gitee.com/HumorGeeks/img/raw/master//img/202109231001966.png;charset=UTF-8)
 
@@ -1501,7 +1534,8 @@ public interface SqlNode {
 }
 ```
 
-如`IfSqlNode`当中执行 apply时先计算If逻辑，如果通过就会继续去访问它的子节点。直到最后访问到`TextNode` 时把SQL文本添加至 `DynamicContext`。 通过这种类似递归方式Context就会访问到所有的的节点，并把最后最终符合条件的的SQL文本追加到 Context中。
+如`IfSqlNode`当中执行 apply时先计算If逻辑，如果通过就会继续去访问它的子节点。直到最后访问到`TextNode` 时把SQL文本添加至 `DynamicContext`。
+通过这种类似递归方式Context就会访问到所有的的节点，并把最后最终符合条件的的SQL文本追加到 Context中。
 
 ```java
 //IfSqlNode
@@ -1521,7 +1555,8 @@ public boolean apply(DynamicContext context) {
 
 <img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109231002397.png;charset=UTF-8" alt="image-20200806165121810" style="zoom: 50%;" />
 
-访问完所有节点之后，就会生成一个SQL字符串，但这个并不是可直接执行的SQL,因为里面的参数还是表达式的形式`#{name=name}` 就需要通过`SqlSourceBuilder` 来构建可执行的SQL和参数映射`ParameterMapping` 。然后才能生成BoundSql。下图表示了在上下文中执行所有节点之后，最生成BoundSql。
+访问完所有节点之后，就会生成一个SQL字符串，但这个并不是可直接执行的SQL,因为里面的参数还是表达式的形式`#{name=name}` 就需要通过`SqlSourceBuilder`
+来构建可执行的SQL和参数映射`ParameterMapping` 。然后才能生成BoundSql。下图表示了在上下文中执行所有节点之后，最生成BoundSql。
 
 ![image-20200806170628013](https://gitee.com/HumorGeeks/img/raw/master//img/202109231002599.png;charset=UTF-8)
 
@@ -1544,7 +1579,8 @@ SqlSource 是基于XML解析而来，解析的底层是使用Dom4j 把XML解析�
 
 <img src="https://gitee.com/HumorGeeks/img/raw/master//img/202109231002093.png;charset=UTF-8" alt="image-20200806173121708" style="zoom: 33%;" />
 
-从图中可以看出这是一种递归式的访问 所有节点，如果是文本节点就会直接创建TextNode 或StaticSqlNode。否则就会创建动态脚本节点如IfSqlNode等。这里每种动态节点都会对应的处理器(`NodeHandler`)来创建。创建好之后又会继续访问子节点，让递归继续下去。当然子节点所创建的SqNode 也会作为当前所创建的元素的子节点而存在。
+从图中可以看出这是一种递归式的访问 所有节点，如果是文本节点就会直接创建TextNode 或StaticSqlNode。否则就会创建动态脚本节点如IfSqlNode等。这里每种动态节点都会对应的处理器(`NodeHandler`)
+来创建。创建好之后又会继续访问子节点，让递归继续下去。当然子节点所创建的SqNode 也会作为当前所创建的元素的子节点而存在。
 
 ![image-20200806173540731](https://gitee.com/HumorGeeks/img/raw/master//img/202109231002865.png;charset=UTF-8)
 
@@ -1552,7 +1588,9 @@ SqlSource 是基于XML解析而来，解析的底层是使用Dom4j 把XML解析�
 
 ## Configuration概述
 
-Configuration 是整个MyBatis的配置体系集中管理中心，前面所学Executor、StatementHandler、Cache、MappedStatement...等绝大部分组件都是由它直接或间接的创建和管理。此外影响这些组件行为的属性配置也是由它进行保存和维护。如cacheEnabled、lazyLoadingEnabled ... 等。所以说它MyBatis的大管家很形象。
+Configuration
+是整个MyBatis的配置体系集中管理中心，前面所学Executor、StatementHandler、Cache、MappedStatement...等绝大部分组件都是由它直接或间接的创建和管理。此外影响这些组件行为的属性配置也是由它进行保存和维护。如cacheEnabled、lazyLoadingEnabled
+... 等。所以说它MyBatis的大管家很形象。
 
 ### 核心作用总结
 
@@ -1560,17 +1598,17 @@ Configuration 是整个MyBatis的配置体系集中管理中心，前面所学Ex
 
 - 存储全局配置信息，其来源于settings（设置）
 - 初始化并维护全局基础组件
-  - typeAliases（类型别名）
-  - typeHandlers（类型处理器）
-  - plugins（插件）
-  - environments（环境配置）
-  - cache(二级缓存空间)
+    - typeAliases（类型别名）
+    - typeHandlers（类型处理器）
+    - plugins（插件）
+    - environments（环境配置）
+    - cache(二级缓存空间)
 - 初始化并维护MappedStatement
 - 组件构造器,并基于插件进行增强
-  - newExecutor（执行器）
-  - newStatementHandler（JDBC处理器）
-  - newResultSetHandler（结果集处理器）
-  - newParameterHandler（参数处理器）
+    - newExecutor（执行器）
+    - newStatementHandler（JDBC处理器）
+    - newResultSetHandler（结果集处理器）
+    - newParameterHandler（参数处理器）
 
 ## 配置来源
 
@@ -1627,15 +1665,16 @@ Configuration 配置信息来源于xml和注解，每个文件和注解都是由
 1. 【XmlConfigBuilder】 接收一个config.xml 输入流，然后创建一个空Configuration对象
 2. 【XmlConfigBuilder】解析全局配置
 3. 【XmlConfigBuilder】mapperElements解析，通过Resource或url 指定mapper.xml文件
-   1. 【XmlMapperBuilder】解析缓存、结果集配置等公共配置
-   2. 【XmlMapperBuilder】解析Sql映射<select|insert|upate|delete>
-      1. 【XMLScriptBuilder】解析生成SQL数据源，包括动态脚本
-   3. 【XmlMapperBuilder】构建Statement
-      1. 【MapperBuilderAssistant】设置缓存并添加至Configuration
+    1. 【XmlMapperBuilder】解析缓存、结果集配置等公共配置
+    2. 【XmlMapperBuilder】解析Sql映射<select|insert|upate|delete>
+        1. 【XMLScriptBuilder】解析生成SQL数据源，包括动态脚本
+    3. 【XmlMapperBuilder】构建Statement
+        1. 【MapperBuilderAssistant】设置缓存并添加至Configuration
 
 ### 注解配置解析
 
-注解解析底层实现是通过反射获取Mapper接口当中注解元素实现。有两种方式一种是直接指定接口名，一种是指定包名然后自动扫描包下所有的接口类。这些逻辑均由Mapper注册器(MapperRegistry)实现。其接收一个接口类参数，并基于该参数创建针对该接口的动态代理工厂，然后解析内部方法注解生成每个MapperStatement 最后添加至Configuration 完成解析。
+注解解析底层实现是通过反射获取Mapper接口当中注解元素实现。有两种方式一种是直接指定接口名，一种是指定包名然后自动扫描包下所有的接口类。这些逻辑均由Mapper注册器(MapperRegistry)
+实现。其接收一个接口类参数，并基于该参数创建针对该接口的动态代理工厂，然后解析内部方法注解生成每个MapperStatement 最后添加至Configuration 完成解析。
 
 ![image-20200807121254428](https://gitee.com/HumorGeeks/img/raw/master//img/202109231003788.png;charset=UTF-8)
 
@@ -1688,9 +1727,9 @@ public class ExamplePlugin implements Interceptor {
 </plugins>
 ```
 
- 通过上述配置即可以监控 在执行过修改过程当中，所耗费的时间。
+通过上述配置即可以监控 在执行过修改过程当中，所耗费的时间。
 
- 注：只有从外部类调用拦截目标时 拦截才会生效，如果在内部调用代理逻辑会生效。如在Executor中有两个Query 方法，第一个会调用第二个query。如果你拦截的是第二个Query 则不会成功。
+注：只有从外部类调用拦截目标时 拦截才会生效，如果在内部调用代理逻辑会生效。如在Executor中有两个Query 方法，第一个会调用第二个query。如果你拦截的是第二个Query 则不会成功。
 
 ![image-20200807155939042](https://gitee.com/HumorGeeks/img/raw/master//img/202109231003960.png;charset=UTF-8)
 

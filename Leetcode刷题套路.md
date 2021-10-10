@@ -187,8 +187,9 @@ public int binarySearch(int[] arr,int k) {
 2. 每次缩减不能排除潜在答案
 
 - mid = l + (r - l + 1) / 2
-- 循环条件：l < r   【因为如果 l == r 那么则存在某种情况还是在原地】
-- 缩减搜索空间：l = mid,r = mid - 1 【从左到右依次排序、不能排除潜在答案，所以使用后边这种算法、一般用于找某个东西最后一次出现的位置】或者 l = mid + 1,r = mid【从左到右依次排序、不能排除潜在答案，所以使用后边这种算法、一般用于找某个东西第一次出现的位置】
+- 循环条件：l < r 【因为如果 l == r 那么则存在某种情况还是在原地】
+- 缩减搜索空间：l = mid,r = mid - 1 【从左到右依次排序、不能排除潜在答案，所以使用后边这种算法、一般用于找某个东西最后一次出现的位置】或者 l = mid + 1,r =
+  mid【从左到右依次排序、不能排除潜在答案，所以使用后边这种算法、一般用于找某个东西第一次出现的位置】
 
 ~~~java
 public int binarySearch(int[] arr,int k) {
@@ -213,7 +214,7 @@ public int binarySearch(int[] arr,int k) {
 1. 每次都要缩减搜索区域
 2. 每次缩减不能排除潜在答案
 
-- 循环条件：l < r - 1 
+- 循环条件：l < r - 1
 - 缩减搜索空间：l = mid,r = mid
 
 ~~~java
@@ -313,7 +314,7 @@ public ListNode linkedListMiddleNode (ListNode head) {
 
 #### 2、递归
 
-> 1.  问子问题要答案
+> 1. 问子问题要答案
 > 2. 在当前层做一些事情
 > 3. 返回结果
 
@@ -386,8 +387,6 @@ class Solution {
         return res;
     }
 ~~~
-
-
 
 ### 5、哈希表
 
@@ -555,8 +554,6 @@ class Solution {
     }
 }
 ~~~
-
-
 
 ##### 4、二叉树的右视图
 
@@ -1100,8 +1097,6 @@ class Solution {
 }
 ~~~
 
-
-
 #### 3、填充每个节点的下一个右侧指针节点
 
 ##### 3.1、递归
@@ -1390,11 +1385,11 @@ class Solution {
 ##### 2、最长公共子序列
 
 > **df**s(t1,t2,i,j)**
->     **1. Base case : (i,j)越界--》return 0**
->     **2. if memo[i][j] != null --》return memo[i][j]**
->     **3. 问子问题要答案**
->         **a. t1[i] = t2[j]--》result = dfs(t1,t2,i-1,j-1)**
->         **b. t1[i] != t2[j]--》result = max(dfs(t1,t2,i,j-1),dfs(t1,t2,i-1,j))**
+> **1. Base case : (i,j)越界--》return 0**
+> **2. if memo[i][j] != null --》return memo[i][j]**
+> **3. 问子问题要答案**
+> **a. t1[i] = t2[j]--》result = dfs(t1,t2,i-1,j-1)**
+> **b. t1[i] != t2[j]--》result = max(dfs(t1,t2,i,j-1),dfs(t1,t2,i-1,j))**
 >
 > 4. 更新 memo 并且返回**
 

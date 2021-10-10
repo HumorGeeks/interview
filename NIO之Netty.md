@@ -11,7 +11,7 @@
 ## 2、Netty的应用场景
 
 - 互联网行业
-  - 分布式系统中，**各个节点2……间需要远程服务调用**，高性能的`RPC`框架必不可少，`Netty`作为异步高性能的通信框架，往往作为基础通信组件被这些`RPC`框架使用
+    - 分布式系统中，**各个节点2……间需要远程服务调用**，高性能的`RPC`框架必不可少，`Netty`作为异步高性能的通信框架，往往作为基础通信组件被这些`RPC`框架使用
 
 <img src="https://img-blog.csdnimg.cn/20200215174640785.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NzUxMDE0,size_16,color_FFFFFF,t_70" alt="img" style="zoom:150%;" />
 
@@ -19,7 +19,8 @@
 
 - `Java BIO` ： 同步并阻塞(**传统阻塞型**)，服务器实现模式为一个连接一个线程，即客户端有连接请求时服务器端就需要启动一个线程进行处理，如果这个连接不做任何事情会造成不必要的线程开销
 - `Java NIO` ： **同步非阻塞**，服务器实现模式为一个线程处理多个请求(连接)，即客户端发送的连接请求都会注册到多路复用器上，多路复用器轮询到连接有`I/O`请求就进行处理
-- `Java AIO(NIO.2)` ： **异步非阻塞**，`AIO` 引入异步通道的概念，采用了 `Proactor` 模式，简化了程序编写，有效的请求才启动线程，它的特点是先由操作系统完成后才通知服务端程序启动线程去处理，一般适用于连接数较多且连接时间较长的应用
+- `Java AIO(NIO.2)` ： **异步非阻塞**，`AIO` 引入异步通道的概念，采用了 `Proactor`
+  模式，简化了程序编写，有效的请求才启动线程，它的特点是先由操作系统完成后才通知服务端程序启动线程去处理，一般适用于连接数较多且连接时间较长的应用
 
 ### 3.1、BIO编程简单流程（Socket编程）
 
@@ -49,7 +50,8 @@
   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200215174814116.png)
 - NIO 有三大核心部分：**Channel(通道)**，**Buffer(缓冲区)**, **Selector(选择器)**
 - NIO是 面向**缓**冲区 ，或者面向 **块** 编程的。数据读取到一个它稍后处理的缓冲区，需要时可在缓冲区中前后移动，这就增加了处理过程中的灵活性，使用它可以提供**非阻塞**式的高伸缩性网络
-- `Java NIO`的非阻塞模式，使一个线程从某通道发送请求或者读取数据，但是它仅能得到目前可用的数据，如果目前没有数据可用时，就什么都不会获取，而**不是保持线程阻塞**，所以直至数据变的可以读取之前，该线程可以继续做其他的事情。 非阻塞写也是如此，一个线程请求写入一些数据到某通道，但不需要等待它完全写入，这个线程同时可以去做别的事情。
+- `Java NIO`的非阻塞模式，使一个线程从某通道发送请求或者读取数据，但是它仅能得到目前可用的数据，如果目前没有数据可用时，就什么都不会获取，而**不是保持线程阻塞**，所以直至数据变的可以读取之前，该线程可以继续做其他的事情。
+  非阻塞写也是如此，一个线程请求写入一些数据到某通道，但不需要等待它完全写入，这个线程同时可以去做别的事情。
 - 通俗理解：`NIO`是可以做到用一个线程来处理多个操作的。假设有`10000`个请求过来,根据实际情况，可以分配`50`或者`100`个线程来处理。不像之前的阻塞`IO`那样，非得分配`10000`个。
 - `HTTP2.0`使用了多路复用的技术，做到同一个连接并发处理多个请求，而且并发请求的数量比`HTTP1.1`大了好几个数量级。
 
@@ -57,7 +59,8 @@
 
 - `BIO` 以流的方式处理数据,而 `NIO` 以块的方式处理数据,块 `I/O` 的效率比流 `I/O` 高很多
 - `BIO` 是阻塞的，`NIO` 则是非阻塞的
-- `BIO`基于字节流和字符流进行操作，而 `NIO` 基于 Channel(通道)和 Buffer(缓冲区)进行操作，数据总是从通道读取到缓冲区中，或者从缓冲区写入到通道中。**Selector**(选择器)用于监听多个通道的事件（比如：连接请求，数据到达等），因此使用**单个线程就可以监听多个客户端**通道
+- `BIO`基于字节流和字符流进行操作，而 `NIO` 基于 Channel(通道)和 Buffer(缓冲区)进行操作，数据总是从通道读取到缓冲区中，或者从缓冲区写入到通道中。**Selector**(选择器)
+  用于监听多个通道的事件（比如：连接请求，数据到达等），因此使用**单个线程就可以监听多个客户端**通道
 
 # 二、NIO详解
 
@@ -72,18 +75,21 @@
 **Channel：**
 
 - 通信通道，每个客户端连接都会建立一个`Channel`通道
-- 我的理解是：客户端直接与`Channel`进行通信，当客户端发送消息时，消息就流通到`Channel`里面，本地程序需要将`Channel`里面的数据存放在`Buffer`里面，才可以查看；当本地需要发送消息时，先把消息存在`Buffer`里面，再将`Buffer`里面的数据放入`Channel`，数据就流通到了客户端
+- 我的理解是：客户端直接与`Channel`进行通信，当客户端发送消息时，消息就流通到`Channel`里面，本地程序需要将`Channel`里面的数据存放在`Buffer`
+  里面，才可以查看；当本地需要发送消息时，先把消息存在`Buffer`里面，再将`Buffer`里面的数据放入`Channel`，数据就流通到了客户端
 - 总而言之：`Buffer`就是本地程序与`Channel`数据交换的一个中间媒介。
   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200220151830203.png)
   **SelectionKey、Selector：**
 - NIO之所以是非阻塞的，关键在于它一个线程可以同时处理多个客户端的通信。而`Selector`就是它一个线程如何处理多个客户端通信的关键，一个`Selector`就对应一个线程
-- 首先在创建与客户端连接的`Channel`时，应该调用 `Channel.register()`方法，将Channel注册到一个`Selector`上面。调用该方法后，会返回一个`SelectionKey`对象，该对象与`Channel`是一一对应的。而`Selector`则通过管理`SelectionKey`的集合间接的去管理各个`Channel`。示例图如下：
+- 首先在创建与客户端连接的`Channel`时，应该调用 `Channel.register()`方法，将Channel注册到一个`Selector`上面。调用该方法后，会返回一个`SelectionKey`
+  对象，该对象与`Channel`是一一对应的。而`Selector`则通过管理`SelectionKey`的集合间接的去管理各个`Channel`。示例图如下：
   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200220151924254.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NzUxMDE0,size_16,color_FFFFFF,t_70)
 - `Selector`具体是如何管理这么多个通信的呢？这就引出了**事件**。
 
 **事件、以及NIO的工作流程介绍**
 
-- **事件：**当将`Channel`绑定到`Selector`上面时，必须同时为该`Channel`声明一个监听该`Channel`的事件（由`Channel`和该`Channel的事件`一起组成了`SelectionKey`），并将`SelectionKey`加入到`Selector`的`Set`集合中去
+- **事件：**当将`Channel`绑定到`Selector`上面时，必须同时为该`Channel`声明一个监听该`Channel`的事件（由`Channel`和该`Channel的事件`一起组成了`SelectionKey`
+  ），并将`SelectionKey`加入到`Selector`的`Set`集合中去
 - 当有客户端建立连接或者进行通信，会在对应的各个`Channel`中产生不同的事件。
 - `Selector`会一直监听所有的事件，当他监听到某个`SelectionKey`中有事件产生时，会将所有产生事件的`SelectionKey`统一加入到一个集合中去
 - 而我们则需要获取到这个集合，首先对集合中的各个`SelectionKey`进行判断，判断它产生的是什么事件，再根据不同的事件进行不同的处理。
@@ -94,7 +100,8 @@
 
 ### 1.1、基本介绍
 
- 缓冲区（Buffer）：缓冲区本质上是一个可以读写数据的内存块，可以理解成是一个容器对象（含数组），该对象提供了一组方法，可以更轻松地使用内存块，缓冲区对象内置了一些机制，能够跟踪和记录缓冲区的状态变化情况。`Channel`提供从文件、网络读取数据的渠道，但是读取或写入的数据都必须经由`Buffer`。
+缓冲区（Buffer）：缓冲区本质上是一个可以读写数据的内存块，可以理解成是一个容器对象（含数组），该对象提供了一组方法，可以更轻松地使用内存块，缓冲区对象内置了一些机制，能够跟踪和记录缓冲区的状态变化情况。`Channel`
+提供从文件、网络读取数据的渠道，但是读取或写入的数据都必须经由`Buffer`。
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200220152004134.png)
 
 ### 1.2、Buffer类介绍
@@ -103,7 +110,8 @@
 
 - 基类是`Buffer`抽象类
 - 基类派生出基于基本数据类型的7个`xxxBuffer` 抽象类，没有`boolean`相关的`buffer`类。
-- 除了`ByteBuffer`外，每个基本数据的抽象类 `xxxBuffer` 类下面都派生出转向 `ByteBuffer` 的类 `ByteBufferXxxAsBufferL` 和 `ByteBufferAsXxxBufferB`实现类；以及 `DirectXxxBufferU` 和 `DirectXxxBufferS` 和 `HeapXxxBuffer`==（具体实例对象类）==这五个类。
+- 除了`ByteBuffer`外，每个基本数据的抽象类 `xxxBuffer` 类下面都派生出转向 `ByteBuffer` 的类 `ByteBufferXxxAsBufferL` 和 `ByteBufferAsXxxBufferB`
+  实现类；以及 `DirectXxxBufferU` 和 `DirectXxxBufferS` 和 `HeapXxxBuffer`==（具体实例对象类）==这五个类。
 - 就只有抽象类`CharBuffer` 派生出了第六个类`StringCharBuffer`。
 - `ByteBuffer`只派生出了 `HeapByteBuffer` 和 `MappedByteBufferR` 两个类
 - 类图如下：
@@ -138,9 +146,12 @@ while (intBuffer.hasRemaining()) {
 123456789101112
 ```
 
-- `Buffer` 刚创建时，`capacity = 5` ，固定不变。`limit`指针指向`5`，`position`指向`0`，`mark`指向`-1`![在这里插入图片描述](https://img-blog.csdnimg.cn/2020022015215785.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NzUxMDE0,size_16,color_FFFFFF,t_70)
-- 之后调用 `intBuffer.put`方法，向`buffer`中添加数据，会不断移动`position`指针，最后`position`变量会和`limit`指向相同。![在这里插入图片描述](https://img-blog.csdnimg.cn/20200220152219546.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NzUxMDE0,size_16,color_FFFFFF,t_70)
-- 调用 `buffer.flip()`实际上是重置了`position`和`limit`两个变量，将`limit`放在`position`的位置，`position`放在`0`的位置。这里只是最后的`position`和`limit`位置相同，所以`flip`后`limit`位置没变。
+- `Buffer` 刚创建时，`capacity = 5` ，固定不变。`limit`指针指向`5`，`position`指向`0`，`mark`
+  指向`-1`![在这里插入图片描述](https://img-blog.csdnimg.cn/2020022015215785.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NzUxMDE0,size_16,color_FFFFFF,t_70)
+- 之后调用 `intBuffer.put`方法，向`buffer`中添加数据，会不断移动`position`指针，最后`position`变量会和`limit`
+  指向相同。![在这里插入图片描述](https://img-blog.csdnimg.cn/20200220152219546.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NzUxMDE0,size_16,color_FFFFFF,t_70)
+- 调用 `buffer.flip()`实际上是重置了`position`和`limit`两个变量，将`limit`放在`position`的位置，`position`放在`0`的位置。这里只是最后的`position`和`limit`
+  位置相同，所以`flip`后`limit`位置没变。
   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200220152235504.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NzUxMDE0,size_16,color_FFFFFF,t_70)
 - 调用 `intBuffer.get()`实际上是不断移动`position`指针，直到它移动到`limit`的位置
 
@@ -149,83 +160,83 @@ while (intBuffer.hasRemaining()) {
 ##### Buffer基类（抽象类）
 
 - `public final int capacity();`
-  - 直接返回了此缓冲区的容量，`capacity`
+    - 直接返回了此缓冲区的容量，`capacity`
 - `public final int position();`
-  - 直接返回了此缓冲区指针的当前位置
+    - 直接返回了此缓冲区指针的当前位置
 - `public final Buffer position(int newPosition);`
-  - 设置此缓冲区的位置，设置`position`
+    - 设置此缓冲区的位置，设置`position`
 - `public final int limit();`
-  - 返回此缓冲区的限制
+    - 返回此缓冲区的限制
 - `public final Buffer limit(int newLimit);`
-  - 设置此缓冲区的限制，设置`limit`
+    - 设置此缓冲区的限制，设置`limit`
 - `public final Buffer clear();`
-  - 清除此缓冲区，即将各个标记恢复到初识状态， `position = 0;limit = capacity; mark = -1`，但是并没有删除数据。
+    - 清除此缓冲区，即将各个标记恢复到初识状态， `position = 0;limit = capacity; mark = -1`，但是并没有删除数据。
 - `public final Buffer flip();`
-  - 反转此缓冲区， `limit = position;position = 0;mark = -1`。
-  - 当指定数据存放在缓冲区中后，`position`所指向的即为此缓冲区数据最后的位置。只有当数据大小和此缓冲区大小相同时，`position`才和`limit`的指向相同。
-  - `flip()`方法将`limit`置向`position`， `position`置`0`，那么从`position`读取数据到`limit`即为此缓冲区中所有的数据。
+    - 反转此缓冲区， `limit = position;position = 0;mark = -1`。
+    - 当指定数据存放在缓冲区中后，`position`所指向的即为此缓冲区数据最后的位置。只有当数据大小和此缓冲区大小相同时，`position`才和`limit`的指向相同。
+    - `flip()`方法将`limit`置向`position`， `position`置`0`，那么从`position`读取数据到`limit`即为此缓冲区中所有的数据。
 - `public final boolean hasRemaining();`
-  - 告知当前位置和限制之间是否有元素。`return position < limit;`
+    - 告知当前位置和限制之间是否有元素。`return position < limit;`
 - `public abstract boolean isReadOnly();`
-  - 此方法为抽象方法，告知此缓冲区是否为只读缓冲区，具体实现在各个实现类中。
+    - 此方法为抽象方法，告知此缓冲区是否为只读缓冲区，具体实现在各个实现类中。
 - `public abstract boolean hasArray();`
-  - 告知此缓冲区是否具有可访问的底层实现数组
+    - 告知此缓冲区是否具有可访问的底层实现数组
 - `public abstract Object array();`
-  - 返回此缓冲区的底层实现数组
+    - 返回此缓冲区的底层实现数组
 
 #### 1.2.4、Buffer具体实现类（ByteBuffer为例）
 
- 从前面可以看出来对于Java中的基本数据类型（**boolean除外**），都有一个`Buffer`类型与之对应，最常用的自然是`ByteBuffer`类（二进制数据），该类的主要方法如下：
+从前面可以看出来对于Java中的基本数据类型（**boolean除外**），都有一个`Buffer`类型与之对应，最常用的自然是`ByteBuffer`类（二进制数据），该类的主要方法如下：
 
 - `public static ByteBuffer allocateDirect(int capacity);`
 
-  - 创建直接缓冲区
+    - 创建直接缓冲区
 
 - `public static ByteBuffer allocate(int capacity) ;`
 
-  - 设置缓冲区的初识容量
+    - 设置缓冲区的初识容量
 
 - `public abstract byte get();`
 
-  - 从当前位置`position`上`get`数据，获取之后，`position`会自动加`1`
+    - 从当前位置`position`上`get`数据，获取之后，`position`会自动加`1`
 
 - `public abstract byte get(int index);`
 
-  - 通过绝对位置获取数据。
+    - 通过绝对位置获取数据。
 
 - `public abstract ByteBuffer put(byte b);`
 
-  - 从当前位置上添加，`put`之后，`position`会自动加`1`
+    - 从当前位置上添加，`put`之后，`position`会自动加`1`
 
 - `public abstract ByteBuffer put(int index, byte b);`
 
-  - 从绝对位置上添加数据
+    - 从绝对位置上添加数据
 
 - `public abstract ByteBuffer putXxx(Xxx value [, int index]);`
 
-  - 从`position`当前位置插入元素。`Xxx`表示基本数据类型
+    - 从`position`当前位置插入元素。`Xxx`表示基本数据类型
 
-  - 此方法时类型化的 `put` 和 `get`，`put`放入的是什么数据类型，`get`就应该使用相应的数据类型来取出，否则可能有 `BufferUnderflowException` 异常。
+    - 此方法时类型化的 `put` 和 `get`，`put`放入的是什么数据类型，`get`就应该使用相应的数据类型来取出，否则可能有 `BufferUnderflowException` 异常。
 
-  - 示例如下：
+    - 示例如下：
 
-    ```java
-    ByteBuffer buf = ByteBuffer.allocate(64);
-    
-    //类型化方式放入数据
-    buf.putInt(100);
-    buf.putLong(20);
-    buf.putChar('上');
-    buf.putShort((short)44);
-    
-    //取出，当取出的顺序和上面插入的数据类型的顺序不对时，就会抛出BufferUnderflowException异常
-    buf.flip();
-    System.out.println(buf.getInt());
-    System.out.println(buf.getLong());
-    System.out.println(buf.getChar());
-    System.out.println(buf.getShort());
-    1234567891011121314
-    ```
+      ```java
+      ByteBuffer buf = ByteBuffer.allocate(64);
+      
+      //类型化方式放入数据
+      buf.putInt(100);
+      buf.putLong(20);
+      buf.putChar('上');
+      buf.putShort((short)44);
+      
+      //取出，当取出的顺序和上面插入的数据类型的顺序不对时，就会抛出BufferUnderflowException异常
+      buf.flip();
+      System.out.println(buf.getInt());
+      System.out.println(buf.getLong());
+      System.out.println(buf.getChar());
+      System.out.println(buf.getShort());
+      1234567891011121314
+      ```
 
 - 可以将一个普通的Buffer转成只读的Buffer
 
@@ -282,10 +293,10 @@ while (intBuffer.hasRemaining()) {
 ## 2.1、基本介绍
 
 - NIO的通道类似于流，但有些区别
-  - 通道可以同时进行读写，而流只能读或者只能写
-  - 通道可以实现异步读写数据
-  - 通道可以从缓存读数据，也可以写数据到缓存
-    ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200220152304113.png)
+    - 通道可以同时进行读写，而流只能读或者只能写
+    - 通道可以实现异步读写数据
+    - 通道可以从缓存读数据，也可以写数据到缓存
+      ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200220152304113.png)
 - BIO 中的 `stream` 是单向的，例如：`FileInputStream`对象只能进行读取数据的操作，而NIO中的通道（Channel）是双向的，可以读操作，也可以写操作。
 - `Channel` 在 NIO 中是一个接口：`public interface Channel extends Closeable{}`
 - 常用的`Channel`类有：`FileChannel`、`DatagramChannel`、`ServerSocketChannel`（类似`ServerSocket`）、`SocketChannel`（类似`Socket`）
@@ -301,28 +312,28 @@ while (intBuffer.hasRemaining()) {
   public int read(ByteBuffer dst)
   ```
 
-  - 从通道读取数据并放到缓冲区中
-  - 此操作也会移动 `Buffer` 中的`position`指针，不断往`position`中放数据，`read`完成后`position`指向`limit`。
+    - 从通道读取数据并放到缓冲区中
+    - 此操作也会移动 `Buffer` 中的`position`指针，不断往`position`中放数据，`read`完成后`position`指向`limit`。
 
 - ```
   public int write(ByteBuffer src)
   ```
 
-  - 把缓冲区的数据写到通道中
-  - 此操作也会不断移动`Buffer`中的`position`位置直到`limit`，读取到的数据就是`position`到`limit`这两个指针之间的数据。
+    - 把缓冲区的数据写到通道中
+    - 此操作也会不断移动`Buffer`中的`position`位置直到`limit`，读取到的数据就是`position`到`limit`这两个指针之间的数据。
 
 - ```
   public long transferFrom(ReadableByteChannel src, long position, long count)
   ```
 
-  - 从目标通道中复制数据到当前通道
+    - 从目标通道中复制数据到当前通道
 
 - ```
   public long transferTo(long position, long count, WritableByteChannel target)
   ```
 
-  - 把数据从当前通道复制给目标通道
-  - 该方法拷贝数据使用了**零拷贝**，通常用来在网络`IO`传输中，将`FileChannel`里面的文件数据直接拷贝到与客户端或者服务端连接的`Channel`里面从而达到文件传输。
+    - 把数据从当前通道复制给目标通道
+    - 该方法拷贝数据使用了**零拷贝**，通常用来在网络`IO`传输中，将`FileChannel`里面的文件数据直接拷贝到与客户端或者服务端连接的`Channel`里面从而达到文件传输。
 
 ### 应用实例
 
@@ -433,38 +444,38 @@ fileOutputStream.close();
 **ServerSocketChannel**：主要用于在服务器监听新的客户端`Socket`连接
 
 - `public static ServerSocketChannel open()`
-  - 得到一个 `ServerSocketChannel` 通道
+    - 得到一个 `ServerSocketChannel` 通道
 - `public final ServerSocketChannel bind(SocketAddress local)`
-  - 设置服务器监听端口
+    - 设置服务器监听端口
 - `public final SelectableChannel configureBlocking(boolean block)`
-  - 用于设置阻塞或非阻塞模式，取值 `false` 表示采用非阻塞模式
-  - 此方法位于 `ServerSocketChannel` 和 `SocketChannel`的共同父类`AbstractSelectableChannel`类中
+    - 用于设置阻塞或非阻塞模式，取值 `false` 表示采用非阻塞模式
+    - 此方法位于 `ServerSocketChannel` 和 `SocketChannel`的共同父类`AbstractSelectableChannel`类中
 - `public abstract SocketChannel accept()`
-  - 接受一个连接，返回代表这个连接的通道对象
+    - 接受一个连接，返回代表这个连接的通道对象
 - `public final SelectionKey register(Selector sel, int ops)`
-  - 将`Channel`注册到选择器并设置监听事件，也可以在绑定的同时注册多个事件，如下所示：
-  - `channel.register(selector,Selectionkey.OP_READ | Selectionkey.OP_CONNECT)`
+    - 将`Channel`注册到选择器并设置监听事件，也可以在绑定的同时注册多个事件，如下所示：
+    - `channel.register(selector,Selectionkey.OP_READ | Selectionkey.OP_CONNECT)`
 
 **SocketChannel**：网络IO通道，**具体负责进行读写操作**。NIO把缓冲区的数据写入通道，或者把通道里的数据读到缓冲区
 
 - `public static SocketChannel open()`
-  - 得到一个SocketChannel通道
+    - 得到一个SocketChannel通道
 - `public final SelectableChannel configureBlocking(boolean block)`
-  - 设置阻塞或非阻塞模式，取值 false表示采用非阻塞模式
-  - 此方法位于 `ServerSocketChannel` 和 `SocketChannel`的共同父类`AbstractSelectableChannel`类中
+    - 设置阻塞或非阻塞模式，取值 false表示采用非阻塞模式
+    - 此方法位于 `ServerSocketChannel` 和 `SocketChannel`的共同父类`AbstractSelectableChannel`类中
 - `public abstract boolean connect(SocketAddress remote)`
-  - 连接服务器
+    - 连接服务器
 - `public boolean finishConnect()`
-  - 如果上面的方法连接失败，接下来就要通过该方法完成连接操作
+    - 如果上面的方法连接失败，接下来就要通过该方法完成连接操作
 - `public int write(ByteBuffer src)`
-  - 往通道里写数据
-  - 这里写入的是`buffer`里面`position`到`limit`这个之间的数据
+    - 往通道里写数据
+    - 这里写入的是`buffer`里面`position`到`limit`这个之间的数据
 - `public int read(ByteBuffer dst)`
-  - 从通道里读数据
+    - 从通道里读数据
 - `public final SelectionKey register(Selector sel, int ops, Object att)`
-  - 注册`Channel`到选择器并设置监听事件，最后一个参数可以设置共享数据
+    - 注册`Channel`到选择器并设置监听事件，最后一个参数可以设置共享数据
 - `public final void close()`
-  - 关闭通道
+    - 关闭通道
 
 ### 应用实例
 
@@ -526,7 +537,8 @@ public void test() throws IOException {
 ## 3.1、基本介绍
 
 - Java 的 NIO，用非阻塞的 IO 方式。可以用一个线程，处理多个的客户端连接，就会使用到**Selector**(选择器)
-- Selector能够检测多个注册的通道上是否有事件发生(注意:多个Channel以**事件**的方式可以注册到同一个Selector)，如果有事件发生，便获取事件然后针对每个事件进行相应的处理。这样就可以只用一个单线程去管理多个通道，也就是管理多个连接和请求。
+- Selector能够检测多个注册的通道上是否有事件发生(注意:多个Channel以**事件**的方式可以注册到同一个Selector)
+  ，如果有事件发生，便获取事件然后针对每个事件进行相应的处理。这样就可以只用一个单线程去管理多个通道，也就是管理多个连接和请求。
 - 只有在 连接/通道 真正有读写事件发生时，才会进行读写，就大大地减少了系统开销，并且不必为每个连接都创建一个线程，不用去维护多个线程
 - 避免了多线程之间的上下文切换导致的开销
   ![在这里插入图片描述](https://img-blog.csdnimg.cn/2020022015243768.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NzUxMDE0,size_16,color_FFFFFF,t_70)
@@ -542,54 +554,57 @@ public void test() throws IOException {
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200220152509586.png)
 **主要……作用：**
 
- `Selector`通过管理`SelectionKey`的集合从而去监听各个`Channel`。当`Channel`注册到`Selector`上面时，会携带该`Channel`关注的事件**（SelectionKey包含Channel以及与之对应的事件）**，并会返回一个`SelectionKey`的对象，`Selector`将该对象加入到它统一管理的集合中去，从而对`Channel`进行管理。SelectionKey表示的是Selector和网络通道的注册关系，固FileChannel是没有办法通过SelectionKey注册到Selector上去的。
+`Selector`通过管理`SelectionKey`的集合从而去监听各个`Channel`。当`Channel`注册到`Selector`上面时，会携带该`Channel`关注的事件**
+（SelectionKey包含Channel以及与之对应的事件）**，并会返回一个`SelectionKey`的对象，`Selector`将该对象加入到它统一管理的集合中去，从而对`Channel`
+进行管理。SelectionKey表示的是Selector和网络通道的注册关系，固FileChannel是没有办法通过SelectionKey注册到Selector上去的。
 
 **四大事件：**
 
 - `public static final int OP_READ = 1 << 0`
-  - 值为`1`，**表示读操作**，
-  - 代表本`Channel`已经接受到其他客户端传过来的消息，需要将`Channel`中的数据读取到`Buffer`中去
+    - 值为`1`，**表示读操作**，
+    - 代表本`Channel`已经接受到其他客户端传过来的消息，需要将`Channel`中的数据读取到`Buffer`中去
 - `public static final int OP_WRITE = 1 << 2`
-  - 值为`4`，**表示写操作**
-  - 一般临时将`Channel`的事件修改为它，在处理完后又修改回去。我暂时也没明白具体的作用。
+    - 值为`4`，**表示写操作**
+    - 一般临时将`Channel`的事件修改为它，在处理完后又修改回去。我暂时也没明白具体的作用。
 - `public static final int OP_CONNECT = 1 << 3`
-  - 值为`8`，代表建立连接。
-  - 一般在`ServerSocketChannel`上绑定该事件，结合 `channel.finishConnect()`在连接建立异常时进行异常处理
+    - 值为`8`，代表建立连接。
+    - 一般在`ServerSocketChannel`上绑定该事件，结合 `channel.finishConnect()`在连接建立异常时进行异常处理
 - `public static final int OP_ACCEPT = 1 << 4`
-  - 值为`16`，**表示由新的网络连接可以`accept**`。
-  - 与`ServerSocketChannel`进行绑定，用于创建新的`SocketChannel`，并把其注册到`Selector`上去
+    - 值为`16`，**表示由新的网络连接可以`accept**`。
+    - 与`ServerSocketChannel`进行绑定，用于创建新的`SocketChannel`，并把其注册到`Selector`上去
 
 **相关方法**
 
 - `public abstract Selector selector()`
-  - 得到该`SelectionKey`具体是属于哪个`Selector`对象的
+    - 得到该`SelectionKey`具体是属于哪个`Selector`对象的
 - `public abstract SelectableChannel channel()`
-  - 通过`SelectionKey`的到对应的`Channel`
+    - 通过`SelectionKey`的到对应的`Channel`
 - `public final Object attachment()`
-  - 得到与之关联的共享数据，一般用于获取`buffer`
-  - 在使用`register`注册通道时，也可以为该`Channel`绑定一个`Buffer`，可以通过本方法获取这个`Buffer`。
-  - 通过`selectionKey.attach(Object ob)`绑定的数据，也是通过该方法获取
+    - 得到与之关联的共享数据，一般用于获取`buffer`
+    - 在使用`register`注册通道时，也可以为该`Channel`绑定一个`Buffer`，可以通过本方法获取这个`Buffer`。
+    - 通过`selectionKey.attach(Object ob)`绑定的数据，也是通过该方法获取
 - `public abstract SelectionKey interestOps()`
-  - 获取该`SelectionKey`下面的事件
+    - 获取该`SelectionKey`下面的事件
 - `public abstract SelectionKey interestOps(int ops)`
-  - 用于设置或改变某个`Channel`关联的事件
-  - 增加事件：`key.interestOps(key.interestOps | SelectionKey.OP_WRITE)`
-  - 减少事件：`key.interestOps(key.interestOps & ~SelectionKey.OP_WRITE)`
+    - 用于设置或改变某个`Channel`关联的事件
+    - 增加事件：`key.interestOps(key.interestOps | SelectionKey.OP_WRITE)`
+    - 减少事件：`key.interestOps(key.interestOps & ~SelectionKey.OP_WRITE)`
 - `public final boolean isAcceptable(),isReadable(),isWritable(),isConnectable()`
-  - 用于判断这个`SelectionKey`产生的是什么事件，与上面的事件类型一一对应
+    - 用于判断这个`SelectionKey`产生的是什么事件，与上面的事件类型一一对应
 
 ## 3.3、Selector常见方法
 
 - `public static Selector open();`
-  - 得到一个选择器对象，实例化出 `WindowsSelectorImpl`对象。
+    - 得到一个选择器对象，实例化出 `WindowsSelectorImpl`对象。
 - `public int select(long timeout)`
-  - 监控所有注册的通道，当其中有`IO`操作可以进行时，将对应的`SelectionKey`加入到内部集合中并返回，返回的结果为`Channel`响应的事件总和，当结果为`0`时，表示本`Selector`监听的所有`Channel`中没有`Channel`产生事件。
-  - 如果不传入`timeout`值，就会阻塞线程，传入值则为阻塞多少毫秒，通过它设置超时时间。
-  - 之所以需要传入时间，是为了让它等待几秒钟再看有没有`Channel`会产生事件，从而获取一段时间内产生事件的`Channel`的总集合再一起处理。
+    - 监控所有注册的通道，当其中有`IO`操作可以进行时，将对应的`SelectionKey`加入到内部集合中并返回，返回的结果为`Channel`响应的事件总和，当结果为`0`时，表示本`Selector`
+      监听的所有`Channel`中没有`Channel`产生事件。
+    - 如果不传入`timeout`值，就会阻塞线程，传入值则为阻塞多少毫秒，通过它设置超时时间。
+    - 之所以需要传入时间，是为了让它等待几秒钟再看有没有`Channel`会产生事件，从而获取一段时间内产生事件的`Channel`的总集合再一起处理。
 - `selector.selectNow();`
-  - 不会阻塞，立马返回冒泡的事件数
+    - 不会阻塞，立马返回冒泡的事件数
 - `public Set<SelectionKey> selectedKeys()`
-  - 从内部集合中得到所有的`SelectionKey`
+    - 从内部集合中得到所有的`SelectionKey`
 
 # 4、Demo实例
 
@@ -909,20 +924,21 @@ public class GroupChatClient {
 
   读取数据时，读取的结果情况：
 
-  - 当`read=-1`时，说明客户端的数据发送完毕，并且主动的关闭`socket`。所以这种情况下，服务器程序需要关闭`socketSocket`，并且取消`key`的注册。注意：这个时候继续使用`SocketChannel`进行读操作的话，就会抛出：==**远程主机强迫关闭一个现有的连接**==的IO异常
+    - 当`read=-1`时，说明客户端的数据发送完毕，并且主动的关闭`socket`。所以这种情况下，服务器程序需要关闭`socketSocket`，并且取消`key`的注册。注意：这个时候继续使用`SocketChannel`
+      进行读操作的话，就会抛出：==**远程主机强迫关闭一个现有的连接**==的IO异常
 
-  - 当
+    - 当
 
-    ```
-    read=0
-    ```
+      ```
+      read=0
+      ```
 
-    时：
+      时：
 
-    - 某一时刻`SocketChannel`中当前没有数据可读。
-    - 客户端的数据发送完毕。
-    - [详情见此博文](https://blog.csdn.net/cao478208248/article/details/41648359)
-    - 但是对于博文中的这一条，经过本人测试，这种情况下返回的是读取的数据的大小，而不是`0`：**`ByteBuffer`的`position`等于`limit`，这个时候也会返回`0`**
+        - 某一时刻`SocketChannel`中当前没有数据可读。
+        - 客户端的数据发送完毕。
+        - [详情见此博文](https://blog.csdn.net/cao478208248/article/details/41648359)
+        - 但是对于博文中的这一条，经过本人测试，这种情况下返回的是读取的数据的大小，而不是`0`：**`ByteBuffer`的`position`等于`limit`，这个时候也会返回`0`**
 
 # 5、NIO的零拷贝
 
@@ -993,7 +1009,7 @@ public class GroupChatClient {
 
 ### 1.2、Netty优点
 
- `Netty`对`JDK`自带的`NIO`的`API`进行了封装，解决了上述问题。
+`Netty`对`JDK`自带的`NIO`的`API`进行了封装，解决了上述问题。
 
 - 设计优雅：适用于各种传输类型的统一 `API` 阻塞和非阻塞 `Socket`；基于灵活且可扩展的事件模型，可以清晰地分离关注点；高度可定制的线程模型 - 单线程，一个或多个线程池.
 - 安全：完整的 `SSL/TLS` 和 `StartTLS` 支持
@@ -1002,12 +1018,12 @@ public class GroupChatClient {
 ## 2、I/O线程模型
 
 - 目前存在的线程模型主要有：
-  - 传统阻塞I/O服务模型
-  - Reactor模式
+    - 传统阻塞I/O服务模型
+    - Reactor模式
 - 根据`Reactor`的数量和处理资源池线程的数量不同，有如下`3`种典型的实现
-  - 单`Reactor`单线程
-  - 单`Reactor`多线程
-  - 主从`Reactor`多线程
+    - 单`Reactor`单线程
+    - 单`Reactor`多线程
+    - 主从`Reactor`多线程
 - `Netty`线程模型主要基于**主从Reactor多线程模型**做了一定的改进，其中主从`Reactor`多线程模型有多个`Reactor`。
 
 ### 2.1、传统阻塞I/O服务模型
@@ -1087,7 +1103,8 @@ public static void handler(Socket socket) {
 
 **针对传统阻塞I/O服务模型的2个缺点，解决方案如下：**
 
-- 基于 `I/O` 复用模型：多个连接共用一个阻塞对象，应用程序只需要在一个阻塞对象等待，无需阻塞等待所有连接。当某个连接有新的数据可以处理时，操作系统通知应用程序，线程从阻塞状态返回，开始进行业务处理。`Reactor` 对应的叫法: 1. 反应器模式 2. 分发者模式(`Dispatcher`) 3. 通知者模式(`notifier`)
+- 基于 `I/O` 复用模型：多个连接共用一个阻塞对象，应用程序只需要在一个阻塞对象等待，无需阻塞等待所有连接。当某个连接有新的数据可以处理时，操作系统通知应用程序，线程从阻塞状态返回，开始进行业务处理。`Reactor` 对应的叫法:
+  1. 反应器模式 2. 分发者模式(`Dispatcher`) 3. 通知者模式(`notifier`)
 - 基于线程池复用线程资源：不必再为每个连接创建线程，将连接完成后的业务处理任务分配给线程进行处理，一个线程可以处理多个连接的业务。
 
 **I/O复用结合线程池，就是Reactor模式基本设计思想，如图所示：**
@@ -1117,7 +1134,7 @@ public static void handler(Socket socket) {
 
   事件作出反应。
 
-  - 我的理解是将`Reactor`理解成一个`Selector`，它可以对建立新的连接，也可以将产生的读写事件交换给`Handler`进行处理
+    - 我的理解是将`Reactor`理解成一个`Selector`，它可以对建立新的连接，也可以将产生的读写事件交换给`Handler`进行处理
 
 - `Handlers`：处理程序执行`I/O`事件要完成的实际事件，类似于客户想要与之交谈的公司中的实际官员。`Reactor`通过调度适当的处理程序来响应`I/O`事件，处理程序执行非阻塞操作。
 
@@ -1304,11 +1321,13 @@ public static void main(String[] args) {
 
 ### 3.1、主从Reactor进阶
 
- `Netty`主要是基于主从`Reactor`多线程模式做了一定的改进，其中主从`Reactor`都有单一的一个变成了多个。下面是简单的改进图。
+`Netty`主要是基于主从`Reactor`多线程模式做了一定的改进，其中主从`Reactor`都有单一的一个变成了多个。下面是简单的改进图。
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200222144854655.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NzUxMDE0,size_16,color_FFFFFF,t_70)
 
-- 如图所示，增加了`BossGroup`来维护多个主`Reactor`，主`Reactor`还是只关注连接的`Accept`；增加了`WorkGroup`来维护多个从`Reactor`，从`Reactor`将接收到的请求交给`Handler`进行处理。
-- 在主`Reactor`中接收到`Accept`事件，获取到对应的`SocketChannel`，`Netty`会将它进一步封装成`NIOSocketChannel`对象，这个封装后的对象还包含了该`Channel`对应的`SelectionKey`、通信地址等详细信息
+- 如图所示，增加了`BossGroup`来维护多个主`Reactor`，主`Reactor`还是只关注连接的`Accept`；增加了`WorkGroup`来维护多个从`Reactor`，从`Reactor`
+  将接收到的请求交给`Handler`进行处理。
+- 在主`Reactor`中接收到`Accept`事件，获取到对应的`SocketChannel`，`Netty`会将它进一步封装成`NIOSocketChannel`对象，这个封装后的对象还包含了该`Channel`
+  对应的`SelectionKey`、通信地址等详细信息
 - `Netty`会将装个封装后的`Channel`对象注册到`WorkerGroup`中的从`Reactor`中。
 - 当`WorkerGroup`中的从`Reactor`监听到事件后，就会将之交给与此`Reactor`对应的`Handler`进行处理。
 
@@ -1327,32 +1346,35 @@ public static void main(String[] args) {
 
 - `BossGroup`和`WorkerGroup`类型的本质都是`NioEventLoopGroup`类型。
 
-- `NioEventLoopGroup`相当于一个线程管理器（类似于`ExecutorServevice`），它下面维护很多个`NioEventLoop`线程。（我认为图中的`NioEventGroup`的地方应该改成`NioEventLoop`，可能我的理解有点差错吧）
+- `NioEventLoopGroup`相当于一个线程管理器（类似于`ExecutorServevice`），它下面维护很多个`NioEventLoop`线程。（我认为图中的`NioEventGroup`
+  的地方应该改成`NioEventLoop`，可能我的理解有点差错吧）
 
-  - 在初始化这两个`Group`线程组时，默认会在每个`Group`中生成`CPU*2`个`NioEventLoop`线程
-  - 当`n`个连接来了，`Group`默认会按照连接请求的顺序分别将这些连接分给各个`NioEventLoop`去处理。
-  - 同时`Group`还负责管理`EventLoop`的生命周期。
+    - 在初始化这两个`Group`线程组时，默认会在每个`Group`中生成`CPU*2`个`NioEventLoop`线程
+    - 当`n`个连接来了，`Group`默认会按照连接请求的顺序分别将这些连接分给各个`NioEventLoop`去处理。
+    - 同时`Group`还负责管理`EventLoop`的生命周期。
 
 - `NioEventLoop`表示一个不断循环的执行处理任务的线程
 
-  - 它维护了一个线程和任务队列。
-  - 每个`NioEventLoop`都包含一个`Selector`，用于监听绑定在它上面的`socket`通讯。
-  - 每个`NioEventLoop`相当于`Selector`，负责处理多个`Channel`上的事件
-  - 每增加一个请求连接，`NioEventLoopGroup`就将这个请求依次分发给它下面的`NioEventLoop`处理。
+    - 它维护了一个线程和任务队列。
+    - 每个`NioEventLoop`都包含一个`Selector`，用于监听绑定在它上面的`socket`通讯。
+    - 每个`NioEventLoop`相当于`Selector`，负责处理多个`Channel`上的事件
+    - 每增加一个请求连接，`NioEventLoopGroup`就将这个请求依次分发给它下面的`NioEventLoop`处理。
 
 - 每个`Boss NioEventLoop`循环执行的步骤有3步：
 
-  - 轮询`accept`事件
-  - 处理`accept`事件，与`client`建立连接，生成`NioSocketChannel`，并将其注册到某个`Worker NioEventLoop`的`selector`上。
-  - 处理任务队列到任务，即`runAllTasks`
+    - 轮询`accept`事件
+    - 处理`accept`事件，与`client`建立连接，生成`NioSocketChannel`，并将其注册到某个`Worker NioEventLoop`的`selector`上。
+    - 处理任务队列到任务，即`runAllTasks`
 
 - 每个`Worker NioEventLoop`循环执行的步骤：
 
-  - 轮询`read`，`write`事件
-  - 处理`I/O`事件，即`read`，`write`事件，在对应的`NioSocketChannel`中进行处理
-  - 处理任务队列的任务，即`runAllTasks`
+    - 轮询`read`，`write`事件
+    - 处理`I/O`事件，即`read`，`write`事件，在对应的`NioSocketChannel`中进行处理
+    - 处理任务队列的任务，即`runAllTasks`
 
-- 每个 `Worker NioEventLoop`处理业务时，会使用`pipeline`（管道），`pipeline`中维护了一个`ChannelHandlerContext`链表，而`ChannelHandlerContext`则保存了`Channel`相关的所有上下文信息，同时关联一个`ChannelHandler`对象。如图所示，`Channel`和`pipeline`一一对应，ChannelHandler和`ChannelHandlerContext`一一对应。
+- 每个 `Worker NioEventLoop`处理业务时，会使用`pipeline`（管道），`pipeline`中维护了一个`ChannelHandlerContext`链表，而`ChannelHandlerContext`
+  则保存了`Channel`相关的所有上下文信息，同时关联一个`ChannelHandler`对象。如图所示，`Channel`和`pipeline`一一对应，ChannelHandler和`ChannelHandlerContext`
+  一一对应。
 
   ![img](https://imgconvert.csdnimg.cn/aHR0cHM6Ly91c2VyLWdvbGQtY2RuLnhpdHUuaW8vMjAxOC8xMS8xLzE2NmNjYmJkYzhjZDFhMmY?x-oss-process=image/format,png)
 
@@ -1565,11 +1587,13 @@ public class NettyClientHandler extends ChannelInboundHandlerAdapter {
 
 ### 3.5、任务队列
 
- 任务队列由`NioEventLoop`维护并不断执行。当我们就收到请求之后，在当前`channel`对应的`pipeline`中的各个`Handler`里面进行业务处理和请求过滤。当某些业务需要耗费大量时间的时候，我们可以将任务提交到由`NioEventLoop`维护的`taskQueue`或`scheduleTaskQueue`中，让当前的`NioEventLoop`线程在空闲时间去执行这些任务。下面将介绍提交任务的3种方式
+任务队列由`NioEventLoop`维护并不断执行。当我们就收到请求之后，在当前`channel`对应的`pipeline`中的各个`Handler`
+里面进行业务处理和请求过滤。当某些业务需要耗费大量时间的时候，我们可以将任务提交到由`NioEventLoop`维护的`taskQueue`或`scheduleTaskQueue`中，让当前的`NioEventLoop`
+线程在空闲时间去执行这些任务。下面将介绍提交任务的3种方式
 
 **用户程序自定义的普通任务：**
 
- 该方式会将任务提交到`taskQueue`队列中。提交到该队列中的任务会按照提交顺序依次执行。
+该方式会将任务提交到`taskQueue`队列中。提交到该队列中的任务会按照提交顺序依次执行。
 
 ```java
 channelHandlerContext.channel().eventLoop().execute(new Runnable(){
@@ -1583,7 +1607,7 @@ channelHandlerContext.channel().eventLoop().execute(new Runnable(){
 
 **用户自定义的定时任务：**
 
- 该方式会将任务提交到`scheduleTaskQueue`定时任务队列中。该队列是底层是优先队列`PriorityQueue`实现的，固该队列中的任务会按照时间的先后顺序定时执行。
+该方式会将任务提交到`scheduleTaskQueue`定时任务队列中。该队列是底层是优先队列`PriorityQueue`实现的，固该队列中的任务会按照时间的先后顺序定时执行。
 
 ```java
 channelHandlerContext.channel().eventLoop().schedule(new Runnable() {
@@ -1596,7 +1620,8 @@ channelHandlerContext.channel().eventLoop().schedule(new Runnable() {
 ```
 
 **为其他EventLoop线程对应的Channel添加任务**
-可以在`ChannelInitializer`中，将刚创建的各个`Channel`以及对应的标识加入到统一的集合中去，然后可以根据标识获取`Channel`以及其对应的`NioEventLoop`，然后就课程调用`execute()`或者`schedule()`方法。
+可以在`ChannelInitializer`中，将刚创建的各个`Channel`以及对应的标识加入到统一的集合中去，然后可以根据标识获取`Channel`以及其对应的`NioEventLoop`，然后就课程调用`execute()`
+或者`schedule()`方法。
 
 ### 3.6、异步模型
 
@@ -1605,7 +1630,8 @@ channelHandlerContext.channel().eventLoop().schedule(new Runnable() {
 - 异步的概念和同步相对。当一个异步过程调用发出后，调用者不能立刻得到结果。实际处理这个调用的组件在完成后，通过状态、通知和回调来通知调用者。
 - `Netty` 中的 `I/O` 操作是异步的，包括 `Bind`、`Write`、`Connect` 等操作会简单的返回一个 `ChannelFuture`。
 - 调用者并不能立刻获得结果，而是通过 `Future-Listener` 机制，用户可以方便的主动获取或者通过通知机制获得 `IO` 操作结果
-- `Netty` 的异步模型是建立在 `future` 和 `callback` 的之上的。`callback` 就是回调。重点说 `Future`，它的核心思想是：假设一个方法 `fun`，计算过程可能非常耗时，等待 `fun`返回显然不合适。那么可以在调用 `fun` 的时候，立马返回一个 `Future`，后续可以通过 `Future`去监控方法 `fun` 的处理过程(即 ： `Future-Listener` 机制)
+- `Netty` 的异步模型是建立在 `future` 和 `callback` 的之上的。`callback` 就是回调。重点说 `Future`，它的核心思想是：假设一个方法 `fun`，计算过程可能非常耗时，等待 `fun`
+  返回显然不合适。那么可以在调用 `fun` 的时候，立马返回一个 `Future`，后续可以通过 `Future`去监控方法 `fun` 的处理过程(即 ： `Future-Listener` 机制)
 
 **Future说明**
 
@@ -1626,7 +1652,7 @@ channelHandlerContext.channel().eventLoop().schedule(new Runnable() {
 - 常用方法如下：
 
   | 方法名称      | 方法作用                                                   |
-  | ------------- | ---------------------------------------------------------- |
+    | ------------- | ---------------------------------------------------------- |
   | isDone()      | 判断当前操作是否完成                                       |
   | isSuccess()   | 判断已完成的当前操作是否成功                               |
   | getCause()    | 获取已完成当前操作失败的原因                               |
@@ -1649,7 +1675,7 @@ serverBootstrap.bind(port).addListener(future -> {
 
 ### 3.7、快速入门实例-HTTP HelloWorld
 
- 浏览器访问`Netty`服务器后，返回`HelloWorld`
+浏览器访问`Netty`服务器后，返回`HelloWorld`
 
 **启动**
 
@@ -1675,7 +1701,7 @@ public static void main(String[] args) throws InterruptedException {
 
 **定义ChannelInitializer**
 
- 用于给`Channel`对应的`pipeline`添加`handler`。该`ChannelInitializer`中的代码在`SocketChannel`被创建时都会执行
+用于给`Channel`对应的`pipeline`添加`handler`。该`ChannelInitializer`中的代码在`SocketChannel`被创建时都会执行
 
 ```java
 public class TestServerInitializer extends ChannelInitializer<SocketChannel> {
@@ -1739,7 +1765,8 @@ public class TestHttpServerHandler extends SimpleChannelInboundHandler<HttpObjec
 
 ## 1、Bootstrap、ServerBootstrap
 
-- `Bootstrap` 意思是引导，一个 `Netty` 应用通常由一个 `Bootstrap` 开始，主要作用是配置整个 `Netty` 程序，串联各个组件，`Netty` 中 `Bootstrap` 类是客户端程序的启动引导类，`ServerBootstrap` 是服务端启动引导类
+- `Bootstrap` 意思是引导，一个 `Netty` 应用通常由一个 `Bootstrap` 开始，主要作用是配置整个 `Netty` 程序，串联各个组件，`Netty` 中 `Bootstrap`
+  类是客户端程序的启动引导类，`ServerBootstrap` 是服务端启动引导类
 
 **常见方法：**
 
@@ -1756,7 +1783,8 @@ public class TestHttpServerHandler extends SimpleChannelInboundHandler<HttpObjec
 
 ## 2、Future、ChannelFuture
 
-- `Netty` 中所有的 `IO` 操作都是异步的，不能立刻得知消息是否被正确处理。但是可以过一会等它执行完成或者直接注册一个监听，具体的实现就是通过 `Future` 和 `ChannelFutures`，他们可以注册一个监听，当操作执行成功或失败时监听会自动触发注册的监听事件
+- `Netty` 中所有的 `IO` 操作都是异步的，不能立刻得知消息是否被正确处理。但是可以过一会等它执行完成或者直接注册一个监听，具体的实现就是通过 `Future` 和 `ChannelFutures`
+  ，他们可以注册一个监听，当操作执行成功或失败时监听会自动触发注册的监听事件
 
 **常见的方法有**
 
@@ -1788,7 +1816,8 @@ public class TestHttpServerHandler extends SimpleChannelInboundHandler<HttpObjec
 ## 4、Selector
 
 - `Netty` 基于 `Selector` 对象实现 `I/O` 多路复用，通过 `Selector` 一个线程可以监听多个连接的 `Channel` 事件。
-- 当向一个 `Selector` 中注册 `Channel` 后，`Selector` 内部的机制就可以自动不断地查询(`Select`) 这些注册的 `Channel` 是否有已就绪的 `I/O` 事件（例如可读，可写，网络连接完成等），这样程序就可以很简单地使用一个线程高效地管理多个 `Channel`
+- 当向一个 `Selector` 中注册 `Channel` 后，`Selector` 内部的机制就可以自动不断地查询(`Select`) 这些注册的 `Channel` 是否有已就绪的 `I/O`
+  事件（例如可读，可写，网络连接完成等），这样程序就可以很简单地使用一个线程高效地管理多个 `Channel`
 - 同时，`Netty`中对`selector`中的`selectedKey`集合进行了替换，它替换成了一个它自己实现的一个`set`集合，这样效率更高。
 
 ## 5、ChannelHandler及其实现类
@@ -1895,11 +1924,13 @@ public class ChannelInboundHandlerAdapter extends ChannelHandlerAdapter implemen
 
 ## 6、Pipeline和ChannelPipeline
 
-- `ChannelPipeline` 是一个 `Handler` 的集合，它负责处理和拦截 `inbound` 或者 `outbound` 的事件和操作，相当于一个贯穿 `Netty` 的链。(也可以这样理解：`ChannelPipeline` 是 保存 `ChannelHandler` 的 `List`，用于处理或拦截 `Channel` 的入站事件和出站操作)
+- `ChannelPipeline` 是一个 `Handler` 的集合，它负责处理和拦截 `inbound` 或者 `outbound` 的事件和操作，相当于一个贯穿 `Netty` 的链。(
+  也可以这样理解：`ChannelPipeline` 是 保存 `ChannelHandler` 的 `List`，用于处理或拦截 `Channel` 的入站事件和出站操作)
 - `ChannelPipeline` 实现了一种高级形式的拦截过滤器模式，使用户可以完全控制事件的处理方式，以及 `Channel` 中各个的 `ChannelHandler` 如何相互交互
 - 在 `Netty` 中每个 `Channel` 都有且仅有一个 `ChannelPipeline` 与之对应，它们的组成关系如下
   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200226210233302.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NzUxMDE0,size_16,color_FFFFFF,t_70)
-- 一个 `Channel` 包含了一个 `ChannelPipeline`，而 `ChannelPipeline` 中又维护了一个由 `ChannelHandlerContext` 组成的双向链表，并且每个 `ChannelHandlerContext` 中又关联着一个 `ChannelHandler`
+- 一个 `Channel` 包含了一个 `ChannelPipeline`，而 `ChannelPipeline` 中又维护了一个由 `ChannelHandlerContext`
+  组成的双向链表，并且每个 `ChannelHandlerContext` 中又关联着一个 `ChannelHandler`
 - 入站事件和出站事件在一个双向链表中，入站事件会从链表 `head` 往后传递到最后一个入站的 `handler`，出站事件会从链表 `tail` 往前传递到最前一个出站的 `handler`，两种类型的 `handler` 互不干扰
 
 **常用方法：**
@@ -1912,7 +1943,8 @@ public class ChannelInboundHandlerAdapter extends ChannelHandlerAdapter implemen
 ## 7、ChannelHandlerContext
 
 - 保存 `Channel` 相关的所有上下文信息，同时关联一个 `ChannelHandler` 对象
-- 即`ChannelHandlerContext` 中 包 含 一 个 具 体 的 事 件 处 理 器 `ChannelHandler` ， 同 时`ChannelHandlerContext` 中也绑定了对应的 `pipeline` 和 `Channel` 的信息，方便对 `ChannelHandler`进行调用.
+- 即`ChannelHandlerContext` 中 包 含 一 个 具 体 的 事 件 处 理 器 `ChannelHandler` ， 同 时`ChannelHandlerContext` 中也绑定了对应的 `pipeline`
+  和 `Channel` 的信息，方便对 `ChannelHandler`进行调用.
 
 **常用方法：**
 
@@ -1929,18 +1961,21 @@ public class ChannelInboundHandlerAdapter extends ChannelHandlerAdapter implemen
 **ChannelOption 参数如下:**
 
 - `ChannelOption.SO_BACKLOG`
-  - 对应 TCP/IP 协议 listen 函数中的 backlog 参数，用来初始化服务器可连接队列大小。
-  - 服务端处理客户端连接请求是顺序处理的，所以同一时间只能处理一个客户端连接。多个客户端来的时候，服务端将不能处理的客户端连接请求放在队列中等待处理，backlog 参数指定了队列的大小。
+    - 对应 TCP/IP 协议 listen 函数中的 backlog 参数，用来初始化服务器可连接队列大小。
+    - 服务端处理客户端连接请求是顺序处理的，所以同一时间只能处理一个客户端连接。多个客户端来的时候，服务端将不能处理的客户端连接请求放在队列中等待处理，backlog 参数指定了队列的大小。
 - `ChannelOption.SO_KEEPALIVE`
-  - 一直保持连接活动状态
+    - 一直保持连接活动状态
 
 ## 9、EventLoopGroup和其实现类NioEventLoopGroup
 
 - EventLoopGroup是一组 EventLoop的抽象，Netty为了更好的利用多核 CPU资源，一般会有多个 EventLoop同时工作，每个 EventLoop维护着一个 Selector 实例。
-- EventLoopGroup 提供 next 接口，可以从组里面按照一定规则获取其中一个 EventLoop来处理任务。在 Netty 服务器端编程中，我们一般都需要提供两个 EventLoopGroup，例如：BossEventLoopGroup 和WorkerEventLoopGroup。
-- 通常一个服务端口即一个 ServerSocketChannel对应一个Selector 和一个EventLoop线程。BossEventLoop 负责接收客户端的连接并将 SocketChannel 交给 WorkerEventLoopGroup 来进行 IO 处理，如下图所示
+- EventLoopGroup 提供 next 接口，可以从组里面按照一定规则获取其中一个 EventLoop来处理任务。在 Netty 服务器端编程中，我们一般都需要提供两个
+  EventLoopGroup，例如：BossEventLoopGroup 和WorkerEventLoopGroup。
+- 通常一个服务端口即一个 ServerSocketChannel对应一个Selector 和一个EventLoop线程。BossEventLoop 负责接收客户端的连接并将 SocketChannel 交给
+  WorkerEventLoopGroup 来进行 IO 处理，如下图所示
   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200226210300805.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NzUxMDE0,size_16,color_FFFFFF,t_70)
-- BossEventLoopGroup 通常是一个单线程的 EventLoop，EventLoop 维护着一个注册了ServerSocketChannel 的 Selector 实例BossEventLoop 不断轮询 Selector 将连接事件分离出来
+- BossEventLoopGroup 通常是一个单线程的 EventLoop，EventLoop 维护着一个注册了ServerSocketChannel 的 Selector 实例BossEventLoop 不断轮询 Selector
+  将连接事件分离出来
 - 通常是 OP_ACCEPT 事件，然后将接收到的 SocketChannel 交给 WorkerEventLoopGroup
 - WorkerEventLoopGroup 会由 next 选择其中一个 EventLoop来将这个 SocketChannel 注册到其维护的 Selector 并对其后续的 IO 事件进行处理
 
@@ -2328,39 +2363,39 @@ public static void main(String[] args) throws InterruptedException {
 
 - 首先初始化两个NioEventLoopGroup。其中BossGroup一般设置线程为1
 - 初始化一个ServerBootStrap类。并调用它设置很多参数。
-  - `group()`：服务端设置两个Group，客户端设置一个Group
-  - `chnnel()`：服务端传入`NioServerSocketChannel`，客户端传入`NioSocketChannel`
-  - `option()`：服务端给BossGroup设置`SO_BACKLOG`任务队列大小
-  - `childOption()`：服务端给WorkerGroup设置连接`SO_KEEPALIVE`保持连接状态
-  - `handler()`：服务端给BossGroup设置Handler，客户端设置Handler
-  - `childHandler()`：服务端给WorkerGroup设置Handler。
+    - `group()`：服务端设置两个Group，客户端设置一个Group
+    - `chnnel()`：服务端传入`NioServerSocketChannel`，客户端传入`NioSocketChannel`
+    - `option()`：服务端给BossGroup设置`SO_BACKLOG`任务队列大小
+    - `childOption()`：服务端给WorkerGroup设置连接`SO_KEEPALIVE`保持连接状态
+    - `handler()`：服务端给BossGroup设置Handler，客户端设置Handler
+    - `childHandler()`：服务端给WorkerGroup设置Handler。
 - 通过BootStrap去绑定端口，监听关闭事件。设置为同步
 
 **Handler：**
 
 - `SimpleChannelInboundHandler`
-  - 可以继承它来处理很多通信。经过上面几个案例推敲，一般写自己的Handler继承它就可以了
+    - 可以继承它来处理很多通信。经过上面几个案例推敲，一般写自己的Handler继承它就可以了
 - `ChannelInboundHandlerAdapter`
-  - 这个是上一个的父类，我们在心跳检测的时候通过继承它的`userEventTriggered`去判断连接状态
-  - 其实通过上面那个`simple`也可以继承这个`trigger`
+    - 这个是上一个的父类，我们在心跳检测的时候通过继承它的`userEventTriggered`去判断连接状态
+    - 其实通过上面那个`simple`也可以继承这个`trigger`
 - `IdleStateHandler`
-  - 在心跳检测时我们要通过这个Handler去触发上面的`trigger`
+    - 在心跳检测时我们要通过这个Handler去触发上面的`trigger`
 - `HttpServerCodec`
-  - 提供好的用于Http编码解码，一般用于Http请求
+    - 提供好的用于Http编码解码，一般用于Http请求
 - `ChunkedWriteHandler`
-  - 提供好的Handler，以块方式写，添加ChunkedWriter处理器
-  - 我搜了一下，它一般用于发送大文件。这个东西使我们在Websocket的时候用的。
+    - 提供好的Handler，以块方式写，添加ChunkedWriter处理器
+    - 我搜了一下，它一般用于发送大文件。这个东西使我们在Websocket的时候用的。
 - `HttpObjectAggregator`
-  - 它会将http数据聚合在一起发送
+    - 它会将http数据聚合在一起发送
 - `WebSocketServerProtocolHandler`
-  - 传入ws路径，将Http协议升级成为ws协议
+    - 传入ws路径，将Http协议升级成为ws协议
 
 **Netty中通信数据实体：**
 
 - `TextWebSocketFrame`
-  - 这是我们在websocket连接的时候用的，它表示一个文本帧，是websocket进行通信的数据形式
+    - 这是我们在websocket连接的时候用的，它表示一个文本帧，是websocket进行通信的数据形式
 - `HttpObject`
-  - 这是我们在建立Http连接的时候用到的，可以将它转换成一个`HttpRequest`
+    - 这是我们在建立Http连接的时候用到的，可以将它转换成一个`HttpRequest`
 
 **Hander常用方法：**
 
@@ -2385,20 +2420,21 @@ public static void main(String[] args) throws InterruptedException {
 **Netty本身的编解码的机制和问题分析（为什么要引入Protobuf)**
 
 - Netty 提供的编码器
-  - StringEncoder，对字符串数据进行编码
-  - ObjectEncoder，对 Java 对象进行编码
+    - StringEncoder，对字符串数据进行编码
+    - ObjectEncoder，对 Java 对象进行编码
 - Netty 提供的解码器
-  - StringDecoder, 对字符串数据进行解码
-  - ObjectDecoder，对 Java 对象进行解码
+    - StringDecoder, 对字符串数据进行解码
+    - ObjectDecoder，对 Java 对象进行解码
 - Netty 本身自带的 ObjectDecoder 和 ObjectEncoder 可以用来实现 POJO 对象或各种业务对象的编码和解码，底层使用的仍是 Java 序列化技术 , 而Java 序列化技术本身效率就不高，存在如下问题
-  - 无法跨语言
-  - 序列化后的体积太大，是二进制编码的 5 倍多。
-  - 序列化性能太低
-  - 引出 新的解决方案 [Google 的 Protobuf]
+    - 无法跨语言
+    - 序列化后的体积太大，是二进制编码的 5 倍多。
+    - 序列化性能太低
+    - 引出 新的解决方案 [Google 的 Protobuf]
 
 ## 2、Protobuf简介
 
- 首先Protobuf是用来将对象序列化的，相类似的技术还有Json序列化等等。它是一种高效的结构化数据存储格式，可以用于结构化数据串行化（序列化）。它很适合做数据存储或**RPC（远程过程调用）数据交换格式**。目前很多公司 `http+json =》 tcp+protobuf`
+首先Protobuf是用来将对象序列化的，相类似的技术还有Json序列化等等。它是一种高效的结构化数据存储格式，可以用于结构化数据串行化（序列化）。它很适合做数据存储或**RPC（远程过程调用）数据交换格式**
+。目前很多公司 `http+json =》 tcp+protobuf`
 
 - Protobuf 是以 message 的方式来管理数据的
 - 支持跨平台、跨语言，即[客户端和服务器端可以是不同的语言编写的] （支持目前绝大多数语言，例如 C++、C#、Java、python 等
@@ -2409,11 +2445,11 @@ public static void main(String[] args) throws InterruptedException {
 
 ## 3、proto文件格式
 
- 首先我们需要在`.proto`文件中定义好实体及他们的属性，再进行编译成`java`对象为我们所用。下面将介绍`proto`文件的写法。
+首先我们需要在`.proto`文件中定义好实体及他们的属性，再进行编译成`java`对象为我们所用。下面将介绍`proto`文件的写法。
 
 **文件头**
 
- 就想我们写`java`需要写`package`包名一样，`.proto`文件也要写一些文件的全局属性，主要用于将`.proto`文件编译成`Java`文件。
+就想我们写`java`需要写`package`包名一样，`.proto`文件也要写一些文件的全局属性，主要用于将`.proto`文件编译成`Java`文件。
 
 | `实例`                                 | `介绍`                       |
 | -------------------------------------- | ---------------------------- |
@@ -2422,7 +2458,7 @@ public static void main(String[] args) throws InterruptedException {
 | `java_package="com.mical.netty.pojo";` | 表示生成Java对象所在包名     |
 | `java_outer_classname="MyWorker";`     | 表示生成的Java对象的外部类名 |
 
- 我们一般将这些代码写在`proto`文件的开头，以表明生成`Java`对象的相关文件属性。
+我们一般将这些代码写在`proto`文件的开头，以表明生成`Java`对象的相关文件属性。
 
 **定义类和属性**
 
@@ -2443,7 +2479,8 @@ enum DateType {
 12345678910111213
 ```
 
- 如上图所示，我们在文件中不但声明了protobuf的版本，还声明了生成java对象的类名。当生成java对象后，`MyDataInfo`将是对象的类名，同时，它使用`message`声明了`Student`这个内部类，使用`enum`声明了`DataType`这个内部枚举类。就像下面这个样子
+如上图所示，我们在文件中不但声明了protobuf的版本，还声明了生成java对象的类名。当生成java对象后，`MyDataInfo`将是对象的类名，同时，它使用`message`声明了`Student`这个内部类，使用`enum`
+声明了`DataType`这个内部枚举类。就像下面这个样子
 
 - `messag`：声明类。
 - `enum`：声明枚举类。
@@ -2476,11 +2513,11 @@ public final class MyDataInfo {
 | **string** | **String**  | **string** | **一个字符串必须是UTF-8编码或者7-bit ASCII编码的文本。**     |
 | bytes      | ByteString  | string     | 可能包含任意顺序的字节数据                                   |
 
- 类型关注之后,我们看到代码中`string name = 2`，它并不是给name这个变量赋值，而是给它标号。每个类都需要给其中的变量标号，且需要注意的是类的标号是从1开始的，枚举的标号是从0开始的。
+类型关注之后,我们看到代码中`string name = 2`，它并不是给name这个变量赋值，而是给它标号。每个类都需要给其中的变量标号，且需要注意的是类的标号是从1开始的，枚举的标号是从0开始的。
 
 **复杂对象**
 
- 当我们需要统一发送对象和接受对象时，就需要使用一个对象将其他所有对象进行包装，再获取里面的某一类对象。
+当我们需要统一发送对象和接受对象时，就需要使用一个对象将其他所有对象进行包装，再获取里面的某一类对象。
 
 ```java
 syntax = "proto3"; //版本
@@ -2515,7 +2552,8 @@ message Worker {
 1234567891011121314151617181920212223242526272829
 ```
 
- 这里面我们定义了`MyMessage`、`Student`、`Worker`三个对象，`MyMessage`里面持有了一个枚举类`DataType`和，`Student`、`Worker`这两个类对象中的其中一个。这样设计的目的是什么呢？当我们在发送对象时，设置`MyMessage`里面的对象的同时就可以给枚举赋值，这样当我们接收对象时，就可以根据枚举判断我们接受到哪个实例类了。
+这里面我们定义了`MyMessage`、`Student`、`Worker`三个对象，`MyMessage`里面持有了一个枚举类`DataType`和，`Student`、`Worker`
+这两个类对象中的其中一个。这样设计的目的是什么呢？当我们在发送对象时，设置`MyMessage`里面的对象的同时就可以给枚举赋值，这样当我们接收对象时，就可以根据枚举判断我们接受到哪个实例类了。
 
 ## 4、Netty中使用Protobuf
 
@@ -2590,26 +2628,27 @@ message Worker {
 
 # 六、Netty的Handler
 
-
-
 ### 文章目录
 
 - [六、Netty的Handler](https://blog.csdn.net/qq_35751014/article/details/104548228#NettyHandler_0)
-- - [1、Handler介绍](https://blog.csdn.net/qq_35751014/article/details/104548228#1Handler_3)
-  - [2、Handler链式调用](https://blog.csdn.net/qq_35751014/article/details/104548228#2Handler_20)
-  - [3、Handler编解码器](https://blog.csdn.net/qq_35751014/article/details/104548228#3Handler_49)
-  - [4、简单实例](https://blog.csdn.net/qq_35751014/article/details/104548228#4_101)
-  - [5、Log4j整合到Netty](https://blog.csdn.net/qq_35751014/article/details/104548228#5Log4jNetty_174)
-
-
+-
+    - [1、Handler介绍](https://blog.csdn.net/qq_35751014/article/details/104548228#1Handler_3)
+    - [2、Handler链式调用](https://blog.csdn.net/qq_35751014/article/details/104548228#2Handler_20)
+    - [3、Handler编解码器](https://blog.csdn.net/qq_35751014/article/details/104548228#3Handler_49)
+    - [4、简单实例](https://blog.csdn.net/qq_35751014/article/details/104548228#4_101)
+    - [5、Log4j整合到Netty](https://blog.csdn.net/qq_35751014/article/details/104548228#5Log4jNetty_174)
 
 ## 1、Handler介绍
 
 - netty的组件设计：Netty的主要组件有`Channel、EventLoop、ChannelFuture、ChannelHandler、ChannelPipe`等
-- 我们先来复习一下`ChannelHandler`和`ChannelPipeline`的关系。示例图如下：我们可以将`pipeline`理解为一个双向链表，`ChannelHandlerContext`看作链表中的一个节点，`ChannelHandler`则为每个节点中保存的一个属性对象。
+- 我们先来复习一下`ChannelHandler`和`ChannelPipeline`的关系。示例图如下：我们可以将`pipeline`理解为一个双向链表，`ChannelHandlerContext`
+  看作链表中的一个节点，`ChannelHandler`则为每个节点中保存的一个属性对象。
   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200228002406548.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NzUxMDE0,size_16,color_FFFFFF,t_70)
-- `ChannelHandler`充当了处理入站和出站数据的应用程序逻辑的容器。例如，实现`ChannelInboundHandler`接口（或`ChannelInboundHandlerAdapter`），你就可以接收入站事件和数据，这些数据会被业务逻辑处理。当要给客户端发送响应时，也可以从`ChannelInboundHandler`冲刷数据。业务逻辑通常写在一个或者多个`ChannelInboundHandler`中。`ChannelOutboundHandler`原理一样，只不过它是用来处理出站数据的
-- `ChannelPipeline`提供了`ChannelHandler`链的容器。以客户端应用程序为例，如果事件的运动方向是从客户端到服务端的，那么我们称这些事件为出站的，即客户端发送给服务端的数据会通过`pipeline`中的一系列`ChannelOutboundHandler`，并被这些`Handler`处理，反之则称为入站的
+- `ChannelHandler`充当了处理入站和出站数据的应用程序逻辑的容器。例如，实现`ChannelInboundHandler`接口（或`ChannelInboundHandlerAdapter`
+  ），你就可以接收入站事件和数据，这些数据会被业务逻辑处理。当要给客户端发送响应时，也可以从`ChannelInboundHandler`冲刷数据。业务逻辑通常写在一个或者多个`ChannelInboundHandler`
+  中。`ChannelOutboundHandler`原理一样，只不过它是用来处理出站数据的
+- `ChannelPipeline`提供了`ChannelHandler`链的容器。以客户端应用程序为例，如果事件的运动方向是从客户端到服务端的，那么我们称这些事件为出站的，即客户端发送给服务端的数据会通过`pipeline`
+  中的一系列`ChannelOutboundHandler`，并被这些`Handler`处理，反之则称为入站的
 - 简单来说，以服务器端为例：接受数据的过程就是入站，发送数据的过程就是出站。客户端也一样。
 - 下面，来看看我们常用的`Handler`的关系图：`Inbound`处理入站，`Outbound`处理出站
   ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200228002044542.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NzUxMDE0,size_16,color_FFFFFF,t_70)
@@ -2617,7 +2656,8 @@ message Worker {
 
 ## 2、Handler链式调用
 
- 我们知道，`Pipeline`中的`Handler`可以当作一个双向链表。但是，`Handler`却又存在着入站和出站之分。那么`Netty`是如何将两种类型的`Handler`保存在一个链表中，却又能够入站的时候调用`InboundHandler`，出栈的时候调用`OutBoundHandler`呢？看下图，黄色的表示入站，以及入站的`Handler`，绿色的表示出站，以及出站的`Handler`。
+我们知道，`Pipeline`中的`Handler`可以当作一个双向链表。但是，`Handler`却又存在着入站和出站之分。那么`Netty`是如何将两种类型的`Handler`
+保存在一个链表中，却又能够入站的时候调用`InboundHandler`，出栈的时候调用`OutBoundHandler`呢？看下图，黄色的表示入站，以及入站的`Handler`，绿色的表示出站，以及出站的`Handler`。
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2020022800205860.png)
 ​ 当我们调用如下代码时，我们就会获得一个上图所示的`Handler`链表。下面代码时在`ChannelInitializer`类中添加`Handler`的部分代码。
 
@@ -2633,21 +2673,27 @@ protected void initChannel(SocketChannel ch) throws Exception {
 12345678
 ```
 
- 当一个请求来了的时候，首先会将请求发给`pipeline`中位于链表首部的`Handler`。如图所示，首先由`LongToByteEncoder`（这个东西不管，就是个出站的）接受到入站请求，但是这个东西是个`OutBound`。所以它收到入站请求时就不做处理，直接转发给它的下一个`ByteToLongDecoder`（这个东西也不管，它是入站的）。这个东西接受到了入站请求了，一看它自己也是一个`Inbound`，所以它就将请求的数据进行处理，然后转发给下一个。之后又是一个`Outbound`，然后再进行转发，到了最后的`InBoundHandler`，在这里我们可以进行业务的处理等等操作。
+当一个请求来了的时候，首先会将请求发给`pipeline`中位于链表首部的`Handler`。如图所示，首先由`LongToByteEncoder`（这个东西不管，就是个出站的）接受到入站请求，但是这个东西是个`OutBound`
+。所以它收到入站请求时就不做处理，直接转发给它的下一个`ByteToLongDecoder`（这个东西也不管，它是入站的）。这个东西接受到了入站请求了，一看它自己也是一个`Inbound`
+，所以它就将请求的数据进行处理，然后转发给下一个。之后又是一个`Outbound`，然后再进行转发，到了最后的`InBoundHandler`，在这里我们可以进行业务的处理等等操作。
 
- 然后如果需要返回数据，我们就调用`writeAndFlush`方法，这个方法可不简单，当他一调用，就会触发出站的请求，然后就由当前所在的`Handler`节点往回调用。往回调用的途中，如果遇到`InBound`就直接转发给下一个`Handler`，直到最后将消息返回。
+然后如果需要返回数据，我们就调用`writeAndFlush`方法，这个方法可不简单，当他一调用，就会触发出站的请求，然后就由当前所在的`Handler`节点往回调用。往回调用的途中，如果遇到`InBound`
+就直接转发给下一个`Handler`，直到最后将消息返回。
 
 通过上面的描述，我们可以总结添加`Handler`的以下节点总结：
 
 - 调用`InboundHandler`的顺序和添加的顺序是一致的。
 - 调用`OutboundHandler`的顺序和添加它的顺序是相反的。
-- 链表的末尾不能有`OutHandler`，因为如果最后是`OutHandler`的话，当他前面的`InHandler`处理完数据返回消息调用`writeflush`时，它直接在前面进行反向调用了，就调用不到最后的这个`Out`了。所以我们平常可以将`OutHandler`写在前面，`InHandler`写在后面。
+- 链表的末尾不能有`OutHandler`，因为如果最后是`OutHandler`的话，当他前面的`InHandler`处理完数据返回消息调用`writeflush`时，它直接在前面进行反向调用了，就调用不到最后的这个`Out`
+  了。所以我们平常可以将`OutHandler`写在前面，`InHandler`写在后面。
 - `InHandler`一旦进行`writeAndFlush`，只有这个`InHandler`之前添加的`OutHandler`能够处理他
 
 ## 3、Handler编解码器
 
 - 当Netty发送或者接受一个消息的时候，就将会发生一次数据转换。入站消息会被解码：从字节转换为另一种格式（比如java对象）；如果是出站消息，它会被编码成字节。
-- Netty提供一系列实用的编解码器，他们都实现了ChannelInboundHadnler或者ChannelOutboundHandler接口。在这些类中，channelRead方法已经被重写了。以入站为例，对于每个从入站Channel读取的消息，这个方法会被调用。随后，它将调用由解码器所提供的decode()方法进行解码，并将已经解码的字节转发给ChannelPipeline中的下一个ChannelInboundHandler。
+-
+Netty提供一系列实用的编解码器，他们都实现了ChannelInboundHadnler或者ChannelOutboundHandler接口。在这些类中，channelRead方法已经被重写了。以入站为例，对于每个从入站Channel读取的消息，这个方法会被调用。随后，它将调用由解码器所提供的decode()
+方法进行解码，并将已经解码的字节转发给ChannelPipeline中的下一个ChannelInboundHandler。
 
 **解码器-ByteToMessageDecoder**
 
@@ -2667,8 +2713,9 @@ protected void initChannel(SocketChannel ch) throws Exception {
   12345678
   ```
 
-  - 这个例子，每次入站从`ByteBuf`中读取4字节，将其解码为一个`int`，然后将它添加到下一个`List`中。当没有更多元素可以被添加到该`List`中时，它的内容将会被发送给下一个`ChannelInboundHandler`。int在被添加到List中时，会被自动装箱为Integer。在调用`readInt()`方法前必须验证所输入的`ByteBuf`是否具有足够的数据
-    ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200228002117156.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NzUxMDE0,size_16,color_FFFFFF,t_70)
+    - 这个例子，每次入站从`ByteBuf`中读取4字节，将其解码为一个`int`，然后将它添加到下一个`List`中。当没有更多元素可以被添加到该`List`
+      中时，它的内容将会被发送给下一个`ChannelInboundHandler`。int在被添加到List中时，会被自动装箱为Integer。在调用`readInt()`方法前必须验证所输入的`ByteBuf`是否具有足够的数据
+      ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200228002117156.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NzUxMDE0,size_16,color_FFFFFF,t_70)
 
 **解码器-ReplayingDecoder**
 
@@ -2690,8 +2737,8 @@ protected void initChannel(SocketChannel ch) throws Exception {
 
 - `ReplayingDecoder`使用方便，但它也有一些局限性：
 
-  - 并不是所有的 `ByteBuf` 操作都被支持，如果调用了一个不被支持的方法，将会抛出一个 `UnsupportedOperationException`。
-  - `ReplayingDecoder` 在某些情况下可能稍慢于 `ByteToMessageDecoder`，例如网络缓慢并且消息格式复杂时，消息会被拆成了多个碎片，速度变慢
+    - 并不是所有的 `ByteBuf` 操作都被支持，如果调用了一个不被支持的方法，将会抛出一个 `UnsupportedOperationException`。
+    - `ReplayingDecoder` 在某些情况下可能稍慢于 `ByteToMessageDecoder`，例如网络缓慢并且消息格式复杂时，消息会被拆成了多个碎片，速度变慢
 
 **其他解码器**
 
@@ -2710,7 +2757,7 @@ protected void initChannel(SocketChannel ch) throws Exception {
 
 **实例代码**
 
- 这里只展示，`Handler`相应的代码和添加`Handler`的关键代码。
+这里只展示，`Handler`相应的代码和添加`Handler`的关键代码。
 
 **Decoder**：
 
@@ -2775,7 +2822,7 @@ protected void initChannel(SocketChannel ch) throws Exception {
 1234567
 ```
 
- 这里当客户端或者服务端接受消息的时候，首先会调用入站的解码器，然后业务处理，然后调用出站的编码器返回消息。后面可以在业务处理类中，增加发送消息的代码，此处省略。
+这里当客户端或者服务端接受消息的时候，首先会调用入站的解码器，然后业务处理，然后调用出站的编码器返回消息。后面可以在业务处理类中，增加发送消息的代码，此处省略。
 
 ## 5、Log4j整合到Netty
 
@@ -2809,7 +2856,7 @@ protected void initChannel(SocketChannel ch) throws Exception {
 
 **添加配置文件：**
 
- 在`resource`目录下新建`log4j.properties`即可
+在`resource`目录下新建`log4j.properties`即可
 
 ```properties
 log5j.rootLogger=DEBUG, stdout
@@ -2822,7 +2869,8 @@ log4j.appender.stdout.layout.ConversionPattern=[%p] %C{1} - %m%n
 
 ## 1、什么是拆包和粘包
 
-- TCP是面向连接的，面向流的，提供高可靠性服务。收发两端（客户端和服务器端）都要有一一成对的socket，因此，发送端为了将多个发给接收端的包，更有效的发给对方，使用了优化方法（Nagle算法），将多次**间隔较小且数据量小**的数据，合并成一个大的数据块，然后进行封包。这样做虽然提高了效率，但是接收端就难于分辨出完整的数据包了，因为**面向流的通信是无消息保护边界**的
+- TCP是面向连接的，面向流的，提供高可靠性服务。收发两端（客户端和服务器端）都要有一一成对的socket，因此，发送端为了将多个发给接收端的包，更有效的发给对方，使用了优化方法（Nagle算法），将多次**间隔较小且数据量小**
+  的数据，合并成一个大的数据块，然后进行封包。这样做虽然提高了效率，但是接收端就难于分辨出完整的数据包了，因为**面向流的通信是无消息保护边界**的
 - 由于TCP无消息保护边界，需要在接收端处理消息边界问题，也就是我们所说的粘包、拆包问题。
 - 通常的解决方案是：发送端每发送一次消息，就需要在消息的内容之前携带消息的长度，这样，接收方每次先接受消息的长度，再根据长度去读取该消息剩余的内容。如果`socket`中还有没有读取的内容，也只能放在下一次读取事件中进行。
 
@@ -2830,7 +2878,7 @@ log4j.appender.stdout.layout.ConversionPattern=[%p] %C{1} - %m%n
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200303141016689.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM1NzUxMDE0,size_16,color_FFFFFF,t_70)
 
- 假设客户端同时发送了两个数据包D1和D2给服务端，由于服务端一次读取到字节数是不确定的，固可能存在以下四种情况：
+假设客户端同时发送了两个数据包D1和D2给服务端，由于服务端一次读取到字节数是不确定的，固可能存在以下四种情况：
 
 1. 服务端分两次读取到了两个独立的数据包，分别是D1和D2，没有粘包和拆包
 2. 服务端一次接受到了两个数据包，D1和D2粘合在一起，称之为TCP粘包
@@ -2846,11 +2894,11 @@ log4j.appender.stdout.layout.ConversionPattern=[%p] %C{1} - %m%n
 
 ## 4、TCP粘包代码示例
 
- 本实例主要演示出现拆包和粘包的场景。
+本实例主要演示出现拆包和粘包的场景。
 
 **客户端：**
 
- 我们将使用循环连续发送10个`String`类型的字符串。这里相当于发送了10次。
+我们将使用循环连续发送10个`String`类型的字符串。这里相当于发送了10次。
 
 ```java
 @Override
@@ -2868,7 +2916,7 @@ public void channelActive(ChannelHandlerContext ctx) throws Exception {
 
 **服务端：**
 
- 我们接受客户端发过来的字符串。
+我们接受客户端发过来的字符串。
 
 ```java
 private int count = 0;

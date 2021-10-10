@@ -1,83 +1,81 @@
-
-
 ## JUC并发编程
 
 ### 1、线程池（重点）
 
 > 重点 ： **三大方法、七大参数、七种拒绝策略**
 
-   1. 程序的运行，本质：占用系统资源、优化资源的使用
+1. 程序的运行，本质：占用系统资源、优化资源的使用
 
-   2. 池化技术: 事先准备一些资源、有人要用就来这里拿，拿完之后还给我
+2. 池化技术: 事先准备一些资源、有人要用就来这里拿，拿完之后还给我
 
-   3. 线程池的好处
+3. 线程池的好处
 
-      - 降低资源消耗、提高相应的速度
-      - 方便管理
+    - 降低资源消耗、提高相应的速度
+    - 方便管理
 
-   4. 线程复用、可以控制最大并发数，管理线程
+4. 线程复用、可以控制最大并发数，管理线程
 
-      - FixedThreadPool 和 SingleThreadPool : 允许的请求队列长度为 Integer.MAX_VALUE，可能会堆积大量的请求，从而导致 OOM
-      - CachedThreadPool 和 ScheduledThreadPool : 允许的创建线程数量为 Integer.MAX_VALUE，可能会创建大量的线程，从而导致 OOM。
+    - FixedThreadPool 和 SingleThreadPool : 允许的请求队列长度为 Integer.MAX_VALUE，可能会堆积大量的请求，从而导致 OOM
+    - CachedThreadPool 和 ScheduledThreadPool : 允许的创建线程数量为 Integer.MAX_VALUE，可能会创建大量的线程，从而导致 OOM。
 
-   5. 三大方法
+5. 三大方法
 
-      ~~~java
-      Executors.newSingleThreadExecutor();  //固定单个线程
-      Executors.newFixedThreadPool(10);     //固定线程个数
-      Executors.newCachedThreadPool();     //可伸缩的线程个数
-      ~~~
+   ~~~java
+   Executors.newSingleThreadExecutor();  //固定单个线程
+   Executors.newFixedThreadPool(10);     //固定线程个数
+   Executors.newCachedThreadPool();     //可伸缩的线程个数
+   ~~~
 
-   6. ThreadPoolExecutor 七大参数
+6. ThreadPoolExecutor 七大参数
 
-      ~~~java
-      new ThreadPoolExecutor(1, 1,
-                             0L, TimeUnit.MILLISECONDS,
-                             newLinkedBlockingQueue<Runnable>())
-      new ThreadPoolExecutor(nThreads, nThreads,
-                             0L, TimeUnit.MILLISECONDS, 
-                             new LinkedBlockingQueue<Runnable>())
-      new ThreadPoolExecutor(0, Integer.MAX_VALUE,                      //21亿   OOM
-                             60L, TimeUnit.SECONDS,
-                             new SynchronousQueue<Runnable>())
-          
-          //本质 ThreadPoolExecutor()
-            public ThreadPoolExecutor(int corePoolSize,                             //核心线程数大小
-                                    int maximumPoolSize,                                  //最大核心线程大小       
-                                          long keepAliveTime,                                     //超时没有人用就会释放
-                                          TimeUnit unit,                                               //超时单位
-                                          BlockingQueue<Runnable> workQueue,    //阻塞队列
-                                          ThreadFactory threadFactory,                      //线程工厂，一般不动
-                                          RejectedExecutionHandler handler) {          //拒绝策略
-                    if (corePoolSize < 0 ||
-                        maximumPoolSize <= 0 ||
-                        maximumPoolSize < corePoolSize ||
-                        keepAliveTime < 0)
-                        throw new IllegalArgumentException();
-                    if (workQueue == null || threadFactory == null || handler == null)
-                        throw new NullPointerException();
-                    this.acc = System.getSecurityManager() == null ?
-                            null :
-                            AccessController.getContext();
-                    this.corePoolSize = corePoolSize;
-                    this.maximumPoolSize = maximumPoolSize;
-                    this.workQueue = workQueue;
-                    this.keepAliveTime = unit.toNanos(keepAliveTime);
-                    this.threadFactory = threadFactory;
-                    this.handler = handler;
-                }
-          
-      ~~~
+   ~~~java
+   new ThreadPoolExecutor(1, 1,
+                          0L, TimeUnit.MILLISECONDS,
+                          newLinkedBlockingQueue<Runnable>())
+   new ThreadPoolExecutor(nThreads, nThreads,
+                          0L, TimeUnit.MILLISECONDS, 
+                          new LinkedBlockingQueue<Runnable>())
+   new ThreadPoolExecutor(0, Integer.MAX_VALUE,                      //21亿   OOM
+                          60L, TimeUnit.SECONDS,
+                          new SynchronousQueue<Runnable>())
+       
+       //本质 ThreadPoolExecutor()
+         public ThreadPoolExecutor(int corePoolSize,                             //核心线程数大小
+                                 int maximumPoolSize,                                  //最大核心线程大小       
+                                       long keepAliveTime,                                     //超时没有人用就会释放
+                                       TimeUnit unit,                                               //超时单位
+                                       BlockingQueue<Runnable> workQueue,    //阻塞队列
+                                       ThreadFactory threadFactory,                      //线程工厂，一般不动
+                                       RejectedExecutionHandler handler) {          //拒绝策略
+                 if (corePoolSize < 0 ||
+                     maximumPoolSize <= 0 ||
+                     maximumPoolSize < corePoolSize ||
+                     keepAliveTime < 0)
+                     throw new IllegalArgumentException();
+                 if (workQueue == null || threadFactory == null || handler == null)
+                     throw new NullPointerException();
+                 this.acc = System.getSecurityManager() == null ?
+                         null :
+                         AccessController.getContext();
+                 this.corePoolSize = corePoolSize;
+                 this.maximumPoolSize = maximumPoolSize;
+                 this.workQueue = workQueue;
+                 this.keepAliveTime = unit.toNanos(keepAliveTime);
+                 this.threadFactory = threadFactory;
+                 this.handler = handler;
+             }
+       
+   ~~~
 
-      ~~~java
-      【强制】线程池不允许使用 Executors 去创建，而是通过 ThreadPoolExecutor 的方式，这
-        样的处理方式让写的同学更加明确线程池的运行规则，规避资源耗尽的风险。
-        说明：Executors 返回的线程池对象的弊端如下：
-        1） FixedThreadPool 和 SingleThreadPool：
-        允许的请求队列长度为 Integer.MAX_VALUE，可能会堆积大量的请求，从而导致 OOM。
-        2） CachedThreadPool：
-        允许的创建线程数量为 Integer.MAX_VALUE，可能会创建大量的线程，从而导致 OOM。 
-      ~~~
+   ~~~java
+   【强制】线程池不允许使用 Executors 去创建，而是通过 ThreadPoolExecutor 的方式，这
+     样的处理方式让写的同学更加明确线程池的运行规则，规避资源耗尽的风险。
+     说明：Executors 返回的线程池对象的弊端如下：
+     1） FixedThreadPool 和 SingleThreadPool：
+     允许的请求队列长度为 Integer.MAX_VALUE，可能会堆积大量的请求，从而导致 OOM。
+     2） CachedThreadPool：
+     允许的创建线程数量为 Integer.MAX_VALUE，可能会创建大量的线程，从而导致 OOM。 
+   ~~~
 
 7. 手动创建一个线程池
 
@@ -126,8 +124,6 @@
    > 小结和拓展
 
    了解：IO密集型、CPU密集型：（调优）
-
-
 
 ### 2、四大函数式接口（必须掌握）
 
@@ -230,8 +226,6 @@ public class functionDemo {
     }
 ~~~
 
-
-
 ### 3、Stream流式计算
 
 > 什么是Stream流式计算
@@ -268,8 +262,6 @@ public class functionDemo {
                 .forEach(System.out::println);
     }
 ~~~
-
-
 
 ### 4、ForkJoin
 
@@ -372,8 +364,6 @@ public class Test {
 }
 ~~~
 
-
-
 ### 5、异步回调
 
 > Future 设计的初衷 ： 可以对将来执行的某个事件的结果来建模
@@ -415,8 +405,6 @@ public class Test {
     }
 ~~~
 
-
-
 ### 6、JMM
 
 > 请你谈谈对Volatile的理解
@@ -430,8 +418,6 @@ Volatile 是 java 虚拟机提供的**轻量同步机制**
 > 什么是 JMM
 
 JMM Java内存模型，不存在的东西，概念，约定
-
-
 
 关于JMM一些同步的约定
 
@@ -456,13 +442,17 @@ JMM Java内存模型，不存在的东西，概念，约定
 - **store(存储)**:作用于线程的工作内存中的变量，把工作内存中的一个变量的值传递给主内存，以便随后的write操作使用
 - **write(写入)**:作用于主内存的变量，把store操作从工作内存中得到的变量的值放入主内存的变量中
 
-**如果要把一个变量从主内存传输到工作内存，那就要顺序的执行read和load操作，如果要把一个变量从工作内存回写到主内存，就要顺序的执行store和write操作。对于普通变量，虚拟机只是要求顺序的执行，并没有要求连续的执行，所以如下也是正确的。对于两个线程，分别从主内存中读取变量a和b的值，并不一样要read a; load a; read b; load b; 也会出现如下执行顺序：read a; read b; load b; load a; (对于volatile修饰的变量会有一些其他规则,后边会详细列出)，对于这8中操作，虚拟机也规定了一系列规则，在执行这8中操作的时候必须遵循如下的规则：**
+**
+如果要把一个变量从主内存传输到工作内存，那就要顺序的执行read和load操作，如果要把一个变量从工作内存回写到主内存，就要顺序的执行store和write操作。对于普通变量，虚拟机只是要求顺序的执行，并没有要求连续的执行，所以如下也是正确的。对于两个线程，分别从主内存中读取变量a和b的值，并不一样要read
+a; load a; read b; load b; 也会出现如下执行顺序：read a; read b; load b; load a; (对于volatile修饰的变量会有一些其他规则,后边会详细列出)
+，对于这8中操作，虚拟机也规定了一系列规则，在执行这8中操作的时候必须遵循如下的规则：**
 
 - **不允许read和load、store和write操作之一单独出现**，也就是不允许从主内存读取了变量的值但是工作内存不接收的情况，或者不允许从工作内存将变量的值回写到主内存但是主内存不接收的情况
 - **不允许一个线程丢弃最近的assign操作**，也就是不允许线程在自己的工作线程中修改了变量的值却不同步/回写到主内存
 - **不允许一个线程回写没有修改的变量到主内存**，也就是如果线程工作内存中变量没有发生过任何assign操作，是不允许将该变量的值回写到主内存
 - **变量只能在主内存中产生**，不允许在工作内存中直接使用一个未被初始化的变量，也就是没有执行load或者assign操作。也就是说在执行use、store之前必须对相同的变量执行了load、assign操作
-- **一个变量在同一时刻只能被一个线程对其进行lock操作**，也就是说一个线程一旦对一个变量加锁后，在该线程没有释放掉锁之前，其他线程是不能对其加锁的，但是同一个线程对一个变量加锁后，可以继续加锁，同时在释放锁的时候释放锁次数必须和加锁次数相同。
+- **一个变量在同一时刻只能被一个线程对其进行lock操作**
+  ，也就是说一个线程一旦对一个变量加锁后，在该线程没有释放掉锁之前，其他线程是不能对其加锁的，但是同一个线程对一个变量加锁后，可以继续加锁，同时在释放锁的时候释放锁次数必须和加锁次数相同。
 - **对变量执行lock操作，就会清空工作空间该变量的值**，执行引擎使用这个变量之前，需要重新load或者assign操作初始化变量的值
 - **不允许对没有lock的变量执行unlock操作**，如果一个变量没有被lock操作，那也不能对其执行unlock操作，当然一个线程也不能对被其他线程lock的变量执行unlock操作
 - **对一个变量执行unlock之前，必须先把变量同步回主内存中**，也就是执行store和write操作
@@ -470,8 +460,6 @@ JMM Java内存模型，不存在的东西，概念，约定
 问题：程序不知道主内存的值被修改过了
 
 <img src="C:\Users\Admin\AppData\Roaming\Typora\typora-user-images\image-20200806155006906.png" alt="image-20200806155006906" style="zoom:80%;" />
-
-
 
 ### 7、Volatile
 
@@ -583,7 +571,7 @@ x = x + 5;
 y = x * x;
 ~~~
 
-可能造成的结果  a b x v 这四个默认都是0
+可能造成的结果 a b x v 这四个默认都是0
 
 | 线程A | 线程B |
 | ----- | ----- |
@@ -613,8 +601,6 @@ volatile 可以避免指令重排
 **volatile 可以保证可见性。不能保证原子性，由于内存屏障，可以保证指令重排的现象产生**
 
 **内存屏障在单例模式中使用最多**
-
-
 
 ### 8、彻底玩转单例模式
 
@@ -690,7 +676,7 @@ public class LazySingletonPattern {
 }
 ~~~
 
-> 静态内部类 
+> 静态内部类
 
 ~~~java
 public class InnerClass {
@@ -761,8 +747,6 @@ public final class EnumDemo extends Enum
 }
 ~~~
 
-
-
 ### 9、深入理解CAS
 
 > 什么是 CAS
@@ -829,9 +813,9 @@ public final int getAndAddInt(Object var1, long var2, int var4) {
 
 **缺点 ：**
 
-1.  循环会耗时
-2.  一次性只能保持一个共享变量的原子性
-3.  存在 ABA 问题
+1. 循环会耗时
+2. 一次性只能保持一个共享变量的原子性
+3. 存在 ABA 问题
 
 > CAS ：ABA 问题（狸猫换太子）
 
@@ -855,8 +839,6 @@ public final int getAndAddInt(Object var1, long var2, int var4) {
         System.out.println(atomicInteger.get());
     }
 ~~~
-
-
 
 ### 10、原子引用
 
@@ -916,8 +898,6 @@ public final int getAndAddInt(Object var1, long var2, int var4) {
     }
 ~~~
 
-
-
 ### 11、各种锁的理解
 
 #### 1、公平锁、非公平锁
@@ -940,7 +920,7 @@ public final int getAndAddInt(Object var1, long var2, int var4) {
 
 #### 2、可重入锁
 
-可重入锁（递归锁） 
+可重入锁（递归锁）
 
 > synchronized 版本
 
@@ -1051,7 +1031,7 @@ public class spinLockDemo {
 }
 ~~~
 
-> 测试 
+> 测试
 
 ~~~java
 public static void main(String[] args) throws Exception {
@@ -1126,7 +1106,7 @@ public class MyThread implements Runnable {
 
 > 解决问题
 
-1. 使用 ==jps -l== 定位进程号  
+1. 使用 ==jps -l== 定位进程号
 
    ~~~java
    H:\sourceCode\JUC>jps -l
