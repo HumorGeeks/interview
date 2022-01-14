@@ -84,4 +84,62 @@ PS：实现解耦，所以在最后一步去实现AOP（JDK动态代理，CGLIB�
 
 ## 容器设计理念
 
-### 核心注解应用
+### BeanFactory和FactoryBean区别
+
+BeanFactory
+
+- 顶层核心接口，使用了简单工厂模式。用于生产Bean（就是当前类的实例）
+
+FactoryBean
+
+- 实现了FactoryBean的所有类产生的Bean对象是通过重写FactoryBean的getObject方法而生产出来的特殊的Bean
+- 会出现两个Bean，获取实例getBean方法参数需要加前缀&；
+- 原本类在于提供一些基本信息，比如Mybatis的SqlSessionFactory
+
+### @DependsOn
+
+- 后缀跟的配置类会优先进行加载
+
+### 实例化有几种方式
+
+- 反射
+  - 默认通过反射调用无参构造函数生成
+  - 默认通过反射调用有参构造函数（xml配置了construct）生成
+- 工厂方法
+  - 程序手动实现实例化过程
+
+### 自定义后置处理器和自带后置处理器调用顺序
+
+> 自定义实现带注册功能的Bean定义后置处理器
+
+![](https://gitee.com/HumorGeeks/img/raw/master/img/202201041510573.png)
+
+PS：
+
+- 第一次调用是为了解析配置类，第二次调用是为了给配置类创建cglib动态代理
+- 如果没有Compent注解，那么实现的时候每次都会创建新的实例，不是对应的面向Bean编程
+- 如果有自己实现的Bean定义后置处理器；第三步调用，第四步也进行调用
+
+## 循环依赖详解
+
+> PS：
+>
+> 1. 二级缓存可以解决循环依赖的问题
+>    1. 第一遍instanceA循环加入二级缓存
+>    2. 设置instanceA中的instanceB属性发现没有，instanceB实例化放入二级缓存
+>    3. 设置instanceB中instanceA属性发现二级缓存里边有，完成B的初始化放入一级缓存
+>    4. 设置instanceA中的instanceB属性并完成，完成A的初始化放入一级缓存
+>
+> 2. Spring保证只是在循环依赖的情况下对Bean创建动态代理（如何判断是不是循环依赖）---为了保证单一职责创建Bean的时候来实现动态代理
+>    1. 
+
+### 手写循环依赖着整个过程
+
+### spring然后解决循环依赖
+
+### 为什么要有二级和三级缓存
+
+
+
+
+
