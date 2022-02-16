@@ -195,4 +195,109 @@ PS：后边多看看多理解理解
 
 #### 如何进行拓展
 
-## AOP设计理念
+## 获取到不完整Bean的情况
+
+> 容器正在创建的过程中有多线程来getBean
+
+~~~mermaid
+graph TD
+  Q[getBean-A] --> Q1[getSingleton]
+  Q1[getSingleton] -->|放到三级缓存并标识正在创建|Q2[实例化]
+  Q2[实例化] --> Q3[属性赋值:getBean-B]
+  w[getBean-A] --> w1[getSingleton]
+  w1[getSingleton] -->|一级缓存没拿到但是三级缓存里边有|w2[进行创建并放入二级缓存]
+  w2[进行创建并放入二级缓存] --> w3[返回对应的Bean-A:此时还没有进行属性B的设置]
+~~~
+
+### 如何解决
+
+> 加两把锁（采用二级缓存加上两把锁的方式去解决循环依赖，少一不可）
+
+- getBean的时候：Bean创建过程加锁，然后里边判断一级缓存是不是已经有了，有了就直接返回
+- getSingleton的时候：如果一级缓存不存在但是正在创建的时候加锁
+
+PS：没有循环依赖，不会访问二三级缓存
+
+## 监听器设计原理和使用
+
+> 观察者模式
+
+- 事件（ApplicationEvent)  负责对应相应监听器  事件源发生某事件是特定事件监听器被触发的原因。
+- 监听器(ApplicationListener)  对应于观察者模式中的观察者。监听器监听特定事件,并在内部定义了事件发生后的响应逻辑。
+- 事件发布器（ApplicationEventMulticaster ）对应于观察者模式中的被观察者/主题，  负责通知观察者   对外提供发布事件和增删事件监听器的接口,维护事件和事件监听
+  器之间的映射关系,并在事件发生时负责通知相关监听器
+
+<img src="https://gitee.com/HumorGeeks/img/raw/master/img/202202161506209.png" style="zoom: 50%;" />
+
+### 监听器在什么时候初始化的
+
+1. prepareRefresh(准备刷新上下文环境)----------创建一个早期事件监听器对象
+
+   ~~~java
+   // 激活的情况下才能getBean		
+   this.closed.set(false);
+   this.active.set(true);
+   
+   //创建一个早期事件监听器对象
+   
+   /** Statically specified listeners */
+   private final Set<ApplicationListener<?>> applicationListeners = new LinkedHashSet<>();
+   
+   /** Local listeners registered before refresh */
+   @Nullable
+   private Set<ApplicationListener<?>> earlyApplicationListeners;
+   
+   this.earlyApplicationListeners = new LinkedHashSet<>(this.applicationListeners);
+   ~~~
+
+2. obtainFreshBeanFactory(获取告诉子类初始化Bean工厂  不同工厂不同实现)
+
+   1. 对于基于xml配置的，直接采用耦合的方式进行loadBeanDefinitions
+   2. 对于基于注解配置的，采用bean工厂后置处理器的方式进行loadBeanDefinitions，此处指定bean工厂的序列化ID
+
+3. prepareBeanFactory(对bean工厂进行填充属性)-----------注册解析接口方式监听器的ApplicationListenerDetector
+
+   ~~~java
+   //注册了一个完整的ApplicationContextAwareProcessor 后置处理器用来处理ApplicationContextAware接口的回调方法
+   beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
+   /**
+   *
+   * 忽略以下接口的bean的 接口函数方法。 在populateBean时
+   * 因为以下接口都有setXXX方法， 这些方法不特殊处理将会自动注入容器中的bean(xml配置的时候会通过name或者type对所有的setXXX进行自动装配，所以需要睥睨)
+   */
+   beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
+   beanFactory.ignoreDependencyInterface(EmbeddedValueResolverAware.class);
+   beanFactory.ignoreDependencyInterface(ResourceLoaderAware.class);
+   beanFactory.ignoreDependencyInterface(ApplicationEventPublisherAware.class);
+   beanFactory.ignoreDependencyInterface(MessageSourceAware.class);
+   beanFactory.ignoreDependencyInterface(ApplicationContextAware.class);
+   ~~~
+
+4. initApplicationEventMulticaster----------创建事件多播器,管理并调用注册的事件监听器
+
+5. registerListeners()-----------把我们的事件监听器注册到多播器上
+
+   ~~~java
+   //获取bean定义中的监听器对象（接口方式的监听器就是在这个地方注册到监听器里边的）
+   String[] listenerBeanNames = getBeanNamesForType(ApplicationListener.class, true, false);
+   //把监听器的名称注册到我们的多播器上
+   for (String listenerBeanName : listenerBeanNames) {
+   	getApplicationEventMulticaster().addApplicationListenerBean(listenerBeanName);
+   }
+   // 用于处理接口方式的监听器
+   beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(this));
+   
+   //在这里获取我们的早期事件
+   Set<ApplicationEvent> earlyEventsToProcess = this.earlyApplicationEvents;
+   // 在这里赋null。  也就是值此之后都将没有早期事件了
+   this.earlyApplicationEvents = null;
+   if (earlyEventsToProcess != null) {
+   	//通过多播器进行播发早期事件
+   	for (ApplicationEvent earlyEvent : earlyEventsToProcess) {
+   		getApplicationEventMulticaster().multicastEvent(earlyEvent);
+   	}
+   }
+   ~~~
+
+### 如何在所有Bean创建完成后做一些扩展的代码
+
