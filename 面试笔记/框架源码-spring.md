@@ -229,6 +229,13 @@ PS：没有循环依赖，不会访问二三级缓存
 
 <img src="https://gitee.com/HumorGeeks/img/raw/master/img/202202161506209.png" style="zoom: 50%;" />
 
+### 监听器设计原理
+
+> 1. 观察者模式
+> 2. 接口和注解不同方式的解析
+
+<img src="https://gitee.com/HumorGeeks/img/raw/master/img/202202211054208.png" style="zoom:200%;" />
+
 ### 监听器在什么时候初始化的
 
 1. prepareRefresh(准备刷新上下文环境)----------创建一个早期事件监听器对象
@@ -301,3 +308,37 @@ PS：没有循环依赖，不会访问二三级缓存
 
 ### 如何在所有Bean创建完成后做一些扩展的代码
 
+> 1. 实现ContextRefreshedEvent的一些监听器，能在完成后使用一部分功能
+>
+> 2. 若果一个Bean是SmartInitializingSingleton的实例，那么所有Bean定义创建完成后还会做一些操作
+
+~~~mermaid
+graph TD
+  Q[开始的时候注册EventListenerMethodProcessor处理器] --> Q1[调用smartSingleton.afterSingletonsInstantiated]
+  Q1[调用smartSingleton.afterSingletonsInstantiated] -->Q2[循环所有实现了注解的Bean,然后创建事件监听器,并注册事件到Context中]
+~~~
+
+
+
+~~~java
+		for (String beanName : beanNames) {
+			//从单例缓存池中获取所有的对象
+			Object singletonInstance = getSingleton(beanName);
+			//判断当前的bean是否实现了SmartInitializingSingleton接口
+			if (singletonInstance instanceof SmartInitializingSingleton) {
+				final SmartInitializingSingleton smartSingleton = (SmartInitializingSingleton) singletonInstance;
+				if (System.getSecurityManager() != null) {
+					AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+						smartSingleton.afterSingletonsInstantiated();
+						return null;
+					}, getAccessControlContext());
+				}
+				else {
+					//触发实例化之后的方法afterSingletonsInstantiated
+					smartSingleton.afterSingletonsInstantiated();
+				}
+			}
+		}
+~~~
+
+## AOP设计理念
