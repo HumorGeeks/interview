@@ -342,3 +342,189 @@ graph TD
 ~~~
 
 ## AOP设计理念
+
+### AOP概念
+
+- **增强处理** - AOP 要实现的是在我们原来写的代码的基础上，进行一定的包装，如在方法执行前、方法返回后、方法抛出异常后等地方进行一定的拦截处理
+- **基于动态代理来实现**。默认地，如果使用接口的，用 JDK 提供的动态代理实现，如果没有接口，使用 CGLIB 实现
+
+### AspectJ概念
+
+通过修改代码来静态织入：
+
+- Compile-time weaving：编译期织入，如类 A 使用 AspectJ 添加了一个属性，类 B 引用了它，这个场景就需要编译期的时候就进行织入，否则没法编译类 B
+- Post-compile weaving：编译后织入，也就是已经生成了 .class 文件，或已经打成 jar 包了，这种情况我们需要增强处理的话，就要用到编译后织入
+- Load-time weaving：指的是在加载类的时候进行织入：（自定义类加载器，在 JVM 启动的时候指定 AspectJ 提供的 agent）
+
+### JavaConfig实现AOP
+
+1. MainConfig开启@EnableAspectJAutoProxy(exposeProxy = true)注解
+
+2. 声明一个切面（@Aspect注解）
+
+3. 配置@Pointcut
+
+   ~~~java
+       @Pointcut("execution(* tuling.TulingCalculate.*(..))")
+       public void pointCut(){};
+   
+       @Before(value = "pointCut()")
+       public void methodBefore(JoinPoint joinPoint) throws Throwable {
+           String methodName = joinPoint.getSignature().getName();
+           System.out.println("执行目标方法【"+methodName+"】的<前置通知>,入参"+ Arrays.asList(joinPoint.getArgs()));
+       }
+   ~~~
+
+引入功能的实现
+
+~~~java
+    /*引入:
+    @DeclareParents(value="tuling.TulingCalculate",   // 动态实现的类
+            defaultImpl = SimpleProgramCalculate.class)  // 引入的接口的默认实现
+    public static ProgramCalculate programCalculate;    // 引入的接口*/
+~~~
+
+PS：CGLIB和jdk动态代理都是修改字节码，只是通过不同的方式
+
+PS：AspectJ 提供切点表达式
+
+### 早期Spring如何实现AOP
+
+- 基于接口配置：
+
+  - 定义advice实现MethodBeforeAdvice
+
+    ~~~java
+    public class TulingLogAdvice implements MethodBeforeAdvice {
+        @Override
+        public void before(Method method, Object[] args, Object target) throws Throwable {
+            String methodName = method.getName();
+            System.out.println("执行目标方法【"+methodName+"】的<前置通知>,入参"+ Arrays.asList(args));
+        }
+    }
+    ~~~
+
+  - 通过配置使增强作用于目标方法（一个增强对应一个factoryBean）
+
+    ~~~java
+         public ProxyFactoryBean calculateProxy(){
+             ProxyFactoryBean userService=new ProxyFactoryBean();
+             userService.setInterceptorNames("tulingLogAdvice","tulingLogInterceptor");  // 根据指定的顺序执行
+             userService.setTarget(tulingCalculate());
+             return userService;
+         }
+    ~~~
+
+  - 调用代理对象增强方法
+
+- 基于拦截器配置：
+
+  - 定义拦截器
+
+    ~~~java
+    public class TulingLogInterceptor implements MethodInterceptor {
+        @Override
+        public Object invoke(MethodInvocation invocation) throws Throwable {
+            System.out.println(getClass()+"调用方法前");
+            Object ret=invocation.proceed();
+            System.out.println(getClass()+"调用方法后");
+            return ret;
+        }
+    
+    }
+    ~~~
+
+  - 通过配置使增强作用于目标方法
+
+    ~~~java
+         public ProxyFactoryBean calculateProxy(){
+             ProxyFactoryBean userService=new ProxyFactoryBean();
+             userService.setInterceptorNames("tulingLogAdvice","tulingLogInterceptor");  // 根据指定的顺序执行
+             userService.setTarget(tulingCalculate());
+             return userService;
+         }
+    ~~~
+
+- 底层原理：
+
+  通过Bean初始化的时候生成动态代理来做
+
+- （增强）拦截器之类的执行顺序（责任链-统一的抽象调用类；实现方式：For循环和递归）
+
+**PS：每一个切面需要一个ProxyFactoryBean，只能对一个类进行增强，目前只控制到了类的级别**
+
+### 多种Advisor
+
+```java
+    @Bean
+    public NameMatchMethodPointcutAdvisor tulingLogAspectAdvisor() {
+        NameMatchMethodPointcutAdvisor advisor=new NameMatchMethodPointcutAdvisor();
+        // 通知(Advice)  ：是我们的通知类
+        // 通知者(Advisor)：是经过包装后的细粒度控制方式。
+        advisor.setAdvice(tulingLogAdvice());
+        advisor.setMappedNames("div");
+        return  advisor;
+    }
+
+
+    // RegexpMethodPointcutAdvisor 按正则匹配类
+    @Bean
+    public RegexpMethodPointcutAdvisor tulingLogAspectInterceptor() {
+        RegexpMethodPointcutAdvisor advisor=new RegexpMethodPointcutAdvisor();
+        advisor.setAdvice(tulingLogInterceptor());
+        advisor.setPattern("tuling.TulingCalculate.*");
+        return  advisor;
+    }
+
+
+
+    /**
+     * FactoryBean方式单个： ProxyFactoryBean
+     * @return
+	 */
+     @Bean
+     public ProxyFactoryBean calculateProxy(){
+         ProxyFactoryBean userService=new ProxyFactoryBean();
+         userService.setInterceptorNames("tulingLogAdvice","tulingLogInterceptor");  // 根据指定的顺序执行
+         userService.setTarget(tulingCalculate());
+         return userService;
+     }
+     
+
+    /**
+     * FactoryBean方式单个： ProxyFactoryBean
+     *  控制粒度到方法
+     * @return
+     */
+    @Bean
+    public ProxyFactoryBean calculateProxy(){
+        ProxyFactoryBean userService=new ProxyFactoryBean();
+        userService.setInterceptorNames("tulingLogAspect");
+        userService.setTarget(tulingCalculate());
+        return userService;
+    }
+
+
+
+    /**
+     *     autoProxy: BeanPostProcessor手动指定Advice方式  BeanNameAutoProxyCreator
+     * @return
+	 * */
+     @Bean
+     public BeanNameAutoProxyCreator autoProxyCreator() {
+     BeanNameAutoProxyCreator beanNameAutoProxyCreator = new BeanNameAutoProxyCreator();
+     //设置要创建代理的那些Bean的名字
+     beanNameAutoProxyCreator.setBeanNames("tuling*");
+     //设置拦截链名字(这些拦截器是有先后顺序的)
+     beanNameAutoProxyCreator.setInterceptorNames("tulingLogInterceptor");
+     return beanNameAutoProxyCreator;
+     }
+```
+
+### spring aop源码解析
+
+<img src="https://gitee.com/HumorGeeks/img/raw/master/img/202202221708646.png" style="zoom:100%;" />
+
+![](https://gitee.com/HumorGeeks/img/raw/master/img/202202221716159.png)
+
+采用 ImportBeanDefinitionRegistrar和@import注解实现往容器里边注册一个Bean定义，是AnnotationAwareAspectJAutoProxyCreator和AnnotationAwareAspectJAutoProxyCreator的子类，所以拥有生成动态代理的能力（循环依赖和不发生循环依赖的时候均可生成）
