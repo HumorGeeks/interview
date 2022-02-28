@@ -528,3 +528,56 @@ PS：AspectJ 提供切点表达式
 ![](https://gitee.com/HumorGeeks/img/raw/master/img/202202221716159.png)
 
 采用 ImportBeanDefinitionRegistrar和@import注解实现往容器里边注册一个Bean定义，是AnnotationAwareAspectJAutoProxyCreator和AnnotationAwareAspectJAutoProxyCreator的子类，所以拥有生成动态代理的能力（循环依赖和不发生循环依赖的时候均可生成）
+
+### 问题回答思路
+
+1. AspectJ和AOP和关系
+
+   Spring使用了和aspectj一样的注解，并使用Aspectj来做切入点解析和匹配(AspectJ 5让第三方使用AspectJ的切入点解析和匹配引擎的工具API)。但是spring AOP运行时仍旧是纯的spring AOP,并不依赖于Aspectj的编译器或者织入器
+
+2. AOP中aspect、advise、pointcut、advisor分别有什么意义
+
+3. AOP有几种实现方式
+
+4. Spring-AOP的底层原理
+
+5. @configuration会在扫描之后直接注册到Bean定义里边去；其他的类似@import之类的只有在解析完Bean定义之后才会注册到里边去
+
+### JDk动态代理和CGLIB动态代理源码级别的实现
+
+#### @import注解的作用 
+
+1. 带有@Configuration的配置类(4.2 版本之前只可以导入配置类，4.2版本之后 也可以导入 普通类)
+
+   ~~~java
+   @Import({TestA.class})
+   @Configuration
+   public class ImportConfig {
+   }
+   ~~~
+
+2. ImportSelector 的实现
+
+   ~~~java
+   public class SelfImportSelector implements ImportSelector {
+       @Override
+       public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+           return new String[]{"com.test.importdemo.TestC"};
+       }
+   }
+   ~~~
+
+3. ImportBeanDefinitionRegistrar 的实现
+
+   ~~~java
+   public class SelfImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar {
+       @Override
+       public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+           RootBeanDefinition root = new RootBeanDefinition(TestD.class);
+           registry.registerBeanDefinition("testD", root);
+       }
+   }
+   ~~~
+
+   
+
