@@ -579,5 +579,4 @@ PS：AspectJ 提供切点表达式
    }
    ~~~
 
-   
-
+PS 解析Bean定义，除了@CompomentScan是直接注册到Bean定义里边，其他的是缓存起来然后解析完配置类的时候注册到Bean定义
